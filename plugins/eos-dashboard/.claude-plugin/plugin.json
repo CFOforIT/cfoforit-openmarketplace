@@ -1,0 +1,9 @@
+{
+  "name": "eos-dashboard",
+  "description": "Set up and run a leadership operating cadence: a self-contained dashboard for your vision plan, scorecard, quarterly priorities, and weekly meeting. Three skills help you configure it, draft your vision plan, and prepare each week's meeting. Everything stays on your machine.",
+  "version": "1.0.0",
+  "author": {
+    "name": "CFOforIT"
+  },
+  "keywords": ["eos", "leadership", "vision", "scorecard", "rocks", "meeting", "vto", "level-10"]
+}

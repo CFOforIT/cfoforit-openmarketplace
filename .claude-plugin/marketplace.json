@@ -1,0 +1,16 @@
+{
+  "name": "eos-dashboard",
+  "owner": {
+    "name": "CFOforIT"
+  },
+  "metadata": {
+    "description": "A free leadership operating dashboard, plus skills that help you set it up and run your weekly meeting. Independent tool, not affiliated with EOS Worldwide.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "eos-dashboard",
+      "source": "./plugins/eos-dashboard"
+    }
+  ]
+}

@@ -1,0 +1,2729 @@
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "EOS Dashboard",
+  "schemaVersion": 4,
+  "version": "2.2.1",
+  "description": "Leadership operating dashboard: Vision plan, Scorecard, rolling annual goals to quarterly Rocks, Headlines, Issues, To-Dos, meeting rating. One file, two runtime modes. Served from a private gated path it runs in internal mode with shared state and an automatic finance feed; served or opened anywhere else it runs in standalone mode, storing everything in the local browser only and making no network calls."
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EOS Dashboard</title>
+<link rel="manifest" href="eos.webmanifest">
+<meta name="theme-color" content="#002060">
+<link rel="icon" href="eos.ico">
+<link rel="apple-touch-icon" href="eos-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EOS">
+<style>
+:root{
+  --navy:#002060;--steel:#4682B4;--green:#3CB371;--amber:#D97706;--silver:#C9CCD6;
+  --red:#e0544f;--gray:#9aa3b2;
+  --bg-dark:#0a1228;--bg-mid:#142042;--bg-soft:#1d2b54;--shade:#0f1a36;
+  --white:#ffffff;--text:#e8ebf2;--text-dim:#a8b0c0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg-dark);margin:0;padding:0 0 60px 0;line-height:1.45;font-size:14px;}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 20px;}
+h1{color:var(--white);margin:0;font-size:24px;letter-spacing:0.2px;}
+.subtitle{color:var(--text-dim);font-size:13px;margin:4px 0 0 0;}
+.meta{background:var(--bg-mid);padding:8px 12px;border-left:3px solid var(--steel);margin:14px 0;font-family:'Consolas','Courier New',monospace;font-size:11.5px;color:var(--text-dim);border-radius:0 4px 4px 0;}
+.meta strong{color:var(--text);}
+.topbar{position:sticky;top:0;z-index:30;background:var(--bg-dark);border-bottom:1px solid var(--bg-soft);}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:8px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.brandmark{font-weight:700;color:var(--white);font-size:14px;margin-right:6px;white-space:nowrap;}
+.brandmark span{color:var(--steel);}
+.navlink{font:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--bg-soft);background:var(--bg-mid);color:var(--text);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.navlink:hover{background:var(--bg-soft);}
+.navlink .cnt{font-size:10px;background:var(--steel);color:var(--white);border-radius:9px;padding:1px 6px;font-weight:700;}
+.navlink .cnt.warn{background:var(--amber);} .navlink .cnt.bad{background:var(--red);}
+.navlink.create{background:var(--steel);color:var(--white);border-color:var(--steel);}
+.navlink.create:hover{filter:brightness(1.1);} .navlink.create.on{background:var(--amber);border-color:var(--amber);}
+.quickcreate{background:var(--bg-mid);border-top:1px solid var(--bg-soft);}
+.quickcreate .qc-inner{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.quickcreate .qc-title{font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;width:100%;display:flex;justify-content:space-between;align-items:center;}
+.qc-seg{display:inline-flex;border:1px solid var(--bg-soft);border-radius:6px;overflow:hidden;}
+.qc-seg button{font:inherit;font-size:12px;font-weight:600;padding:6px 12px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;}
+.qc-seg button.on{background:var(--steel);color:var(--white);}
+.spacer{flex:1;}
+.ghostbtn{font:inherit;font-size:12px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--bg-soft);background:transparent;color:var(--text-dim);cursor:pointer;}
+.ghostbtn:hover{color:var(--white);border-color:var(--steel);}
+.readiness{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 18px 0;}
+.rcard{flex:1;min-width:140px;background:var(--bg-mid);padding:10px 14px;border-radius:6px;border-left:3px solid var(--steel);}
+.rcard.ok{border-left-color:var(--green);} .rcard.warn{border-left-color:var(--amber);} .rcard.bad{border-left-color:var(--red);}
+.rcard .num{font-size:22px;font-weight:700;color:var(--white);line-height:1;}
+.rcard .lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;margin-top:5px;}
+section{scroll-margin-top:58px;margin:0 0 30px 0;}
+.sec-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--steel);padding-bottom:6px;margin-bottom:14px;}
+.sec-num{font-family:'Consolas','Courier New',monospace;font-size:12px;color:var(--steel);font-weight:700;}
+.sec-head h2{color:var(--white);margin:0;font-size:18px;font-weight:600;}
+.sec-head .hint{color:var(--text-dim);font-size:12px;margin-left:auto;}
+.block{background:var(--bg-mid);border-radius:8px;padding:14px 16px;margin-bottom:14px;}
+.block h3{margin:0 0 4px 0;color:var(--white);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.block .blocknote{color:var(--text-dim);font-size:11.5px;margin:0 0 12px 0;}
+.lock-note{font-size:9.5px;font-weight:600;letter-spacing:.04em;color:var(--gray);border:1px solid var(--bg-soft);border-radius:9px;padding:2px 8px;text-transform:uppercase;}
+.revrow{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:6px;}
+.revbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;}
+.revbar .bar{width:70%;max-width:34px;background:var(--steel);border-radius:3px 3px 0 0;transition:height .25s;}
+.revbar.cur .bar{background:var(--green);}
+.revbar .bval,.revbar .bmo{font-size:9.5px;color:var(--text-dim);}
+.revbar.cur .bmo,.revbar.cur .bval{color:var(--white);font-weight:600;}
+.revfoot{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:14px;}
+.trend{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;}
+.trend.up{color:var(--green);} .trend.down{color:var(--red);}
+.bignum{font-size:20px;font-weight:700;color:var(--white);}
+.proj{background:var(--shade);border:1px dashed var(--steel);border-radius:6px;padding:10px 14px;margin-top:14px;}
+.proj .q{font-size:12.5px;color:var(--text);margin-bottom:8px;} .proj .q b{color:var(--white);}
+.tbl-wrap{overflow-x:auto;}
+table.metrics{width:100%;border-collapse:collapse;font-size:12px;min-width:760px;}
+table.metrics th,table.metrics td{padding:6px 8px;border-bottom:1px solid var(--bg-soft);text-align:right;white-space:nowrap;}
+table.metrics th{color:var(--white);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;}
+table.metrics th:first-child,table.metrics td:first-child{text-align:left;color:var(--white);font-weight:600;position:sticky;left:0;background:var(--bg-mid);}
+table.metrics td.ttm{font-weight:700;color:var(--white);background:var(--shade);border-right:2px solid var(--bg-soft);}
+table.metrics th.ttm{border-right:2px solid var(--bg-soft);color:var(--steel);}
+table.metrics td.cur{color:var(--white);font-weight:600;}
+.sla-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;}
+.sla{background:var(--shade);border-radius:6px;padding:12px 14px;border-left:3px solid var(--steel);}
+.sla.ok{border-left-color:var(--green);} .sla.warn{border-left-color:var(--amber);} .sla.bad{border-left-color:var(--red);}
+.sla .slatitle{font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-dim);}
+.sla .slaval{font-size:30px;font-weight:700;color:var(--white);line-height:1.1;margin:2px 0;}
+.sla .slaval small{font-size:13px;color:var(--text-dim);font-weight:500;}
+.sla .slawow{font-size:11.5px;font-weight:600;}
+.sla .slawow.down{color:var(--red);} .sla .slawow.up{color:var(--green);} .sla .slawow.flat{color:var(--text-dim);}
+.spark{display:flex;align-items:flex-end;gap:2px;height:30px;margin:8px 0;}
+.spark i{flex:1;background:var(--steel);border-radius:1px;min-height:2px;} .spark i.last{background:var(--white);}
+.slabars{display:flex;align-items:flex-end;gap:3px;height:56px;margin:10px 0 6px;}
+.slabar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;cursor:pointer;}
+.slabar .b{width:100%;background:var(--steel);border-radius:2px 2px 0 0;min-height:2px;}
+.slabar.cur .b{background:var(--white);}
+.slabar .l{font-size:8px;color:var(--gray);white-space:nowrap;}
+.slabar.cur .l{color:var(--white);font-weight:700;}
+.slabar:hover .b{filter:brightness(1.25);}
+.slacur{font-size:10.5px;color:var(--text-dim);margin:2px 0 8px;} .slacur b{color:var(--white);}
+.slabar.editing .b{outline:2px solid var(--amber);}
+.slaedit{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text);background:var(--bg-dark);border:1px solid var(--amber);border-radius:5px;padding:6px 10px;margin:0 0 8px;}
+.slaedit b{color:var(--white);} .slaedit input{width:64px;} .slaedit .ehint{font-size:10px;color:var(--gray);}
+.slainputs{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-dim);margin-top:6px;}
+.slainputs input{width:46px;}
+.qnav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--bg-mid);border-radius:8px;padding:12px 14px;margin-bottom:14px;}
+.qnav .seg{display:inline-flex;border:1px solid var(--bg-soft);border-radius:6px;overflow:hidden;}
+.qnav .seg button{font:inherit;font-size:12px;font-weight:600;padding:6px 12px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;}
+.qnav .seg button.on{background:var(--steel);color:var(--white);}
+.qnav .seg button.cur-period{color:var(--green);}
+.qnav .seg button .nowtag{font-size:8px;font-weight:700;background:var(--green);color:#0a1228;border-radius:6px;padding:1px 5px;margin-left:5px;vertical-align:middle;letter-spacing:.04em;text-transform:uppercase;}
+.qnav .seg button.on .nowtag{background:#0a1228;color:var(--green);}
+.qnav label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;}
+.ctxline{font-size:12px;color:var(--text-dim);width:100%;} .ctxline b{color:var(--white);} .ctxline .wk{color:var(--green);font-weight:600;}
+.goal{background:var(--shade);border-radius:6px;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--navy);}
+.goal .goal-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+.goal .goal-name{font-weight:600;color:var(--white);font-size:13px;flex:1;min-width:180px;}
+.goal .goal-target{font-size:11.5px;color:var(--steel);font-weight:600;width:130px;}
+.goal .goal-owner{font-size:11px;width:96px;}
+.goalNotesBtn{font:inherit;font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--bg-soft);background:transparent;color:var(--steel);cursor:pointer;}
+.goalNotesBtn.on{background:var(--steel);color:var(--white);}
+.goalnotes{margin-top:8px;} .goalnotes textarea{width:100%;min-height:58px;font-size:12px;resize:vertical;}
+.rockDept{font-size:11px;}
+.rock{background:var(--shade);border-radius:6px;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--bg-soft);}
+.rock.corp{border-left-color:var(--steel);} .rock.indiv{border-left-color:var(--silver);}
+.rock-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+.rock-name{font-weight:600;color:var(--white);font-size:14px;flex:1;min-width:160px;}
+.rock-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.linkrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center;}
+.linkchip{font-size:10px;font-weight:600;padding:2px 8px;border-radius:9px;background:var(--bg-dark);color:var(--steel);border:1px solid var(--bg-soft);}
+.linkchip.goal-link{color:var(--green);} .linkchip.unlinked{color:var(--gray);font-style:italic;}
+.rollbtn{font:inherit;font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--bg-soft);background:transparent;color:var(--steel);cursor:pointer;}
+.rollbtn:hover{background:var(--bg-dark);border-color:var(--steel);}
+.linkchip.data-chip{color:var(--green);border-color:var(--green);background:rgba(60,179,113,0.10);font-weight:700;}
+.dataedit{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;background:var(--bg-dark);border:1px solid var(--steel);border-radius:6px;padding:6px 8px;}
+.dataedit select{font-size:11.5px;padding:4px 6px;} .dataedit .ehint{font-size:10px;color:var(--gray);}
+.goalsub{font-size:11px;color:var(--text-dim);margin-top:8px;} .goalsub .gsmall{color:var(--gray);}
+.statusseg{display:inline-flex;border:1px solid var(--bg-soft);border-radius:6px;overflow:hidden;}
+.statusseg button{font:inherit;font-size:10.5px;font-weight:600;padding:4px 9px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;}
+.statusseg button.on.s-ontrack{background:var(--green);color:var(--white);}
+.statusseg button.on.s-atrisk{background:var(--amber);color:var(--white);}
+.statusseg button.on.s-offtrack{background:var(--red);color:var(--white);}
+.pctwrap{display:flex;align-items:center;gap:8px;}
+.pctwrap input[type=range]{width:110px;accent-color:var(--steel);}
+.pctval{font-weight:700;color:var(--white);font-size:13px;width:42px;text-align:right;}
+.timeline{position:relative;height:26px;margin-top:12px;background:var(--bg-dark);border-radius:5px;overflow:hidden;}
+.tl-cells{position:absolute;inset:0;display:flex;}
+.tl-cells div{flex:1;border-right:1px solid var(--bg-soft);font-size:8px;color:var(--gray);text-align:center;padding-top:1px;overflow:hidden;}
+.tl-cells div:last-child{border-right:none;}
+.tl-fill{position:absolute;top:0;bottom:0;left:0;opacity:0.85;}
+.tl-fill.s-ontrack{background:var(--green);} .tl-fill.s-atrisk{background:var(--amber);} .tl-fill.s-offtrack{background:var(--red);}
+.tl-today{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--white);box-shadow:0 0 4px rgba(255,255,255,0.6);}
+.dept{border:1px solid var(--bg-soft);border-radius:6px;margin-bottom:8px;overflow:hidden;}
+.dept-head{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;background:var(--shade);}
+.dept-head:hover{background:var(--bg-soft);}
+.dept-head .chev{color:var(--gray);font-size:11px;transition:transform .15s;display:inline-block;}
+.dept-head.open .chev{transform:rotate(90deg);}
+.dept-head .dname{font-weight:600;color:var(--white);font-size:13px;flex:1;}
+.dept-head .dcount{font-size:10px;color:var(--text-dim);background:var(--bg-dark);border-radius:9px;padding:2px 8px;}
+.dept-head .dcount.off{background:var(--red);color:var(--white);}
+.dept-body{padding:10px 12px;}
+.person-sub{margin-bottom:12px;}
+.person-sub h5{margin:4px 0 8px 0;color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+.person-sub .empty{font-size:11px;color:var(--gray);font-style:italic;padding:2px 0 8px 0;}
+.rostbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--shade);border-radius:6px;padding:10px 12px;margin-bottom:10px;}
+.rostbar .ttl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;width:100%;}
+.additem{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+.addbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--shade);border-radius:6px;padding:10px 12px;margin-top:8px;}
+.addbar .ttl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;width:100%;margin-bottom:-2px;}
+input,select,textarea{font-family:inherit;font-size:12.5px;background:var(--bg-dark);color:var(--text);border:1px solid var(--bg-soft);border-radius:5px;padding:6px 8px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--steel);}
+input.bad,select.bad{border-color:var(--red);}
+.btn{font:inherit;font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;background:var(--steel);color:var(--white);}
+.btn:hover{filter:brightness(1.1);} .btn.cta{background:var(--amber);} .btn.sm{padding:4px 9px;font-size:11px;}
+.iconbtn{font:inherit;background:transparent;border:none;color:var(--gray);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;}
+.iconbtn:hover{color:var(--red);background:var(--shade);}
+.headline-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-bottom:1px solid var(--bg-soft);}
+.headline-item .dot{color:var(--steel);font-weight:700;line-height:1.4;} .headline-item .txt{flex:1;}
+.banner{border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+.banner.suggest{background:rgba(70,130,180,0.15);border:1px solid var(--steel);}
+.banner.flag{background:rgba(224,84,79,0.12);border:1px solid var(--red);} .banner b{color:var(--white);}
+.list-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px;border-radius:6px;background:var(--shade);margin-bottom:8px;border-left:3px solid var(--bg-soft);}
+.list-row.p-high{border-left-color:var(--red);} .list-row.p-medium{border-left-color:var(--amber);} .list-row.p-low{border-left-color:var(--steel);}
+.list-row.resolved,.list-row.complete{opacity:0.55;} .list-row.complete .lr-main{text-decoration:line-through;}
+.list-row .grip{cursor:grab;color:var(--gray);font-size:14px;user-select:none;} .list-row.dragging{opacity:0.4;border-style:dashed;}
+.lr-main{flex:1;min-width:180px;color:var(--white);font-weight:500;}
+.lr-sub{font-size:11px;color:var(--text-dim);margin-top:2px;font-weight:400;}
+.tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:2px 7px;border-radius:9px;}
+.tag.auto{background:var(--bg-soft);color:var(--steel);} .tag.overdue{background:var(--red);color:var(--white);}
+.due-ok{color:var(--text-dim);font-size:11px;}
+.ravg{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
+.ravg-num{font-size:40px;font-weight:700;color:var(--white);line-height:1;}
+.ravg-lbl{font-size:12px;color:var(--text-dim);}
+.rrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bg-soft);}
+.rname{width:90px;font-size:12.5px;color:var(--white);font-weight:500;}
+.rnameinput{width:110px;font-size:12.5px;}
+.rbtns{display:flex;flex-wrap:wrap;gap:4px;}
+.rbtn{width:30px;height:30px;border-radius:6px;border:1px solid var(--bg-soft);background:var(--bg-dark);color:var(--text);font:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+.rbtn.on{background:var(--steel);color:var(--white);border-color:var(--steel);}
+.rhist{margin-top:16px;}
+.rhist-title{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+.rchip{display:inline-block;font-size:11.5px;color:var(--text-dim);background:var(--shade);border:1px solid var(--bg-soft);border-radius:9px;padding:3px 10px;margin:0 6px 6px 0;}
+.rchip b{color:var(--white);}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--bg-soft);color:var(--white);border:1px solid var(--steel);border-radius:8px;padding:10px 16px;font-size:12.5px;font-weight:600;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,0.4);}
+.footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--bg-soft);font-size:11.5px;color:var(--text-dim);}
+.footer code{background:var(--bg-mid);padding:1px 5px;border-radius:3px;color:var(--text);}
+@media (max-width:680px){ .wrap,.topbar-inner{padding-left:14px;padding-right:14px;} h1{font-size:20px;} .revrow{height:96px;} .navlink{font-size:11px;padding:5px 9px;} .sec-head .hint{display:none;} }
+/* ---------- banners, pills ---------- */
+.banner{border-radius:6px;padding:10px 14px;margin:10px 0;font-size:12.5px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.banner b{color:var(--white);}
+.banner.warn{background:rgba(217,119,6,.14);border:1px solid var(--amber);color:var(--text);}
+.banner.bad{background:rgba(224,84,79,.14);border:1px solid var(--red);color:var(--text);}
+.banner.info{background:var(--bg-mid);border:1px solid var(--steel);color:var(--text);}
+.banner .bspacer{flex:1;}
+.backuppill{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;background:var(--bg-mid);border:1px solid var(--bg-soft);color:var(--text-dim);cursor:pointer;}
+.backuppill.ok{color:var(--green);border-color:var(--green);}
+.backuppill.warn{color:var(--amber);border-color:var(--amber);}
+.backuppill.bad{color:var(--red);border-color:var(--red);}
+
+/* ---------- setup ---------- */
+.setupwrap{background:var(--bg-mid);border-radius:8px;padding:18px 20px;border-left:3px solid var(--steel);}
+.setupstep{border-top:1px solid var(--bg-soft);padding:16px 0;}
+.setupstep:first-of-type{border-top:none;padding-top:4px;}
+.setupstep h4{margin:0 0 4px 0;color:var(--white);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.setupstep h4 .sn{font-family:'Consolas','Courier New',monospace;font-size:11px;color:var(--steel);}
+.setupstep h4 .req{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber);border-radius:9px;padding:1px 6px;}
+.setupstep .shint{color:var(--text-dim);font-size:11.5px;margin:0 0 10px 0;}
+.seatchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0 0;}
+.seatchip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;border:1px solid var(--bg-soft);background:var(--shade);color:var(--text-dim);cursor:pointer;}
+.seatchip:hover{border-color:var(--steel);color:var(--white);}
+.personrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px;}
+.personrow input{flex:1;min-width:120px;}
+.scorepick{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;}
+.scorepick label{display:flex;align-items:center;gap:8px;background:var(--shade);border:1px solid var(--bg-soft);border-radius:6px;padding:8px 10px;font-size:12px;cursor:pointer;}
+.scorepick label:hover{border-color:var(--steel);}
+.scorepick input[type=checkbox]{margin:0;}
+
+/* ---------- vision / VTO ---------- */
+.vtogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;}
+.vtostmt{width:100%;background:var(--bg-dark);color:var(--text);border:1px solid var(--bg-soft);border-radius:6px;padding:10px 12px;font:inherit;font-size:13px;resize:vertical;min-height:62px;}
+.vtostmt:focus{outline:none;border-color:var(--steel);}
+.vtostmt::placeholder{color:var(--gray);font-style:italic;}
+.vtolabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);margin:0 0 5px 0;display:flex;align-items:center;gap:8px;}
+.vtolabel .done{color:var(--green);font-size:11px;}
+.vitem{display:flex;gap:8px;align-items:flex-start;background:var(--shade);border:1px solid var(--bg-soft);border-radius:6px;padding:8px 10px;margin-bottom:6px;}
+.vitem .vgrip{color:var(--gray);cursor:grab;font-size:12px;padding-top:3px;}
+.vitem .vfields{flex:1;display:flex;flex-direction:column;gap:5px;}
+.vitem input{width:100%;}
+.vitem .vname{font-weight:600;}
+.vdel{background:none;border:none;color:var(--gray);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px;}
+.vdel:hover{color:var(--red);}
+.vaddrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.vsoftwarn{font-size:11px;color:var(--amber);margin-top:6px;}
+.tractionchip{display:inline-flex;align-items:center;gap:8px;background:var(--shade);border:1px solid var(--bg-soft);border-radius:6px;padding:10px 14px;color:var(--text);text-decoration:none;font-size:12.5px;font-weight:600;margin-right:8px;}
+.tractionchip:hover{border-color:var(--steel);}
+.tractionchip .tnum{font-size:18px;font-weight:700;color:var(--white);}
+.horizonseg{display:inline-flex;border:1px solid var(--bg-soft);border-radius:6px;overflow:hidden;margin-left:auto;}
+.horizonseg button{font:inherit;font-size:11px;font-weight:600;padding:4px 10px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;}
+.horizonseg button.on{background:var(--steel);color:var(--white);}
+
+/* ---------- meeting timer ---------- */
+.timerbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bg-mid);border-radius:8px;padding:10px 14px;margin-bottom:14px;}
+.tseg{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;border:1px solid var(--bg-soft);background:var(--shade);color:var(--text-dim);cursor:pointer;}
+.tseg.on{background:var(--steel);color:var(--white);border-color:var(--steel);}
+.tseg.over{border-color:var(--red);color:var(--red);}
+.tclock{font-family:'Consolas','Courier New',monospace;font-size:20px;font-weight:700;color:var(--white);margin-left:auto;}
+
+/* ---------- mobile ---------- */
+@media (max-width:760px){
+  .wrap{padding:12px 14px;}
+  .topbar-inner{padding:8px 14px;gap:6px;}
+  .navlink{font-size:12px;padding:6px 10px;}
+  h1{font-size:20px;}
+  .sla-grid,.vtogrid,.scorepick{grid-template-columns:1fr;}
+  .revrow{height:96px;}
+  .rcard{min-width:calc(50% - 5px);}
+  .tclock{margin-left:0;}
+}
+
+/* ---------- print: one-page strategy summary ---------- */
+@media print{
+  @page{margin:14mm;}
+  body{background:#fff;color:#111;padding:0;font-size:11pt;}
+  .topbar,.quickcreate,.ghostbtn,.navlink,.backuppill,#syncPill,.vaddrow,.vdel,.vgrip,
+  .timerbar,.banner,#setup,.qnav,.proj,.footer div:last-child{display:none !important;}
+  .wrap{max-width:100%;padding:0;}
+  h1,.sec-head h2,.block h3,.vtolabel{color:#111 !important;}
+  .block,.vitem,.setupwrap{background:#fff !important;border:1px solid #bbb !important;
+    border-radius:4px;page-break-inside:avoid;}
+  .sec-head{border-bottom:2px solid #444;}
+  .vtostmt{border:none !important;background:#fff !important;color:#111 !important;
+    padding:0 !important;min-height:0;resize:none;}
+  .dept-body{display:block !important;}
+  section{page-break-inside:avoid;margin-bottom:14px;}
+  #scorecard,#rocks,#headlines,#ids,#todos,#rating{display:none;}
+  body.print-full #scorecard,body.print-full #rocks,body.print-full #todos{display:block;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="brandmark" id="brandmark">EOS <span>Dashboard</span></span>
+    <a class="navlink" href="#vision">Vision <span class="cnt" id="nav-vto">0/8</span></a>
+    <a class="navlink" href="#scorecard">Scorecard</a>
+    <a class="navlink" href="#rocks">Rocks</a>
+    <a class="navlink" href="#headlines">Headlines <span class="cnt" id="nav-head">0</span></a>
+    <a class="navlink" href="#ids">Issues <span class="cnt" id="nav-ids">0</span></a>
+    <a class="navlink" href="#todos">To-Dos <span class="cnt" id="nav-todos">0</span></a>
+    <button class="navlink create" id="quickRockBtn">+ New rock</button>
+    <button class="navlink create" id="quickGoalBtn">+ New goal</button>
+    <span class="spacer"></span>
+    <span class="backuppill" id="backupPill" title="Age of your last exported backup">Never backed up</span>
+    <span id="syncPill" style="font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;background:var(--bg-mid);border:1px solid var(--bg-soft);color:var(--text-dim);">● Local only</span>
+    <button class="ghostbtn" id="pullBtn">Pull latest</button>
+    <button class="ghostbtn" id="publishBtn" title="Create a read-only snapshot to share with your team">Publish board</button>
+    <button class="ghostbtn" id="absorbBtn" title="Paste an update code from a team member">Absorb updates</button>
+    <button class="ghostbtn" id="backupBtn" title="Download a backup of everything">Back up</button>
+    <a class="navlink" href="#setup" id="setupNav">Setup</a>
+    <button class="ghostbtn" id="resetBtn">Reset meeting</button>
+  </div>
+  <div id="quickCreate" class="quickcreate" style="display:none;"></div>
+</div>
+
+<div class="wrap">
+  <h1 id="pageH1">EOS Dashboard</h1>
+  <p class="subtitle">Your vision, your numbers, and the weekly meeting that connects them.</p>
+
+  <div class="meta" id="freshness">
+    <strong>Meeting date:</strong> <span id="mtgDate"></span> &nbsp;|&nbsp;
+    <strong>QuickBooks:</strong> <span id="qboPull"></span> &nbsp;|&nbsp;
+    <strong>HubSpot:</strong> <span id="hsPull"></span><br>
+    <strong>Active clients:</strong> <span id="activeClients"></span> &nbsp;|&nbsp; Scorecard actuals are auto-pulled and locked. SLA counts and the rocks are editable.
+  </div>
+
+  <div id="banners"></div>
+
+  <!-- SETUP. renderSetup(): wizard on first run, editor on every visit after. -->
+  <section id="setup"></section>
+
+  <!-- VISION PLAN. renderVision(): the eight components. -->
+  <section id="vision"></section>
+
+  <a id="l10" style="display:block;position:relative;top:-58px;visibility:hidden;"></a>
+  <div class="timerbar" id="timerbar"></div>
+
+  <div class="readiness" id="readiness"></div>
+
+  <!-- ============ SCORECARD ============ -->
+  <section id="scorecard">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Scorecard</h2><span class="hint" id="scHint"></span></div>
+
+    <div class="block">
+      <h3>Trailing 12-month revenue <span class="lock-note" id="revLock"></span></h3>
+      <p class="blocknote" id="revNote">Monthly recognized revenue. The current month is still in progress.</p>
+      <div class="revrow" id="revrow"></div>
+      <div class="revfoot">
+        <span class="trend" id="revtrend"></span>
+        <span><span class="bignum" id="revttm"></span> <span style="color:var(--text-dim);font-size:11px;">trailing 12 months</span></span>
+      </div>
+      <div class="proj">
+        <div class="q" id="projQ"></div>
+        <div class="additem" style="margin:0;">
+          <label style="font-size:11.5px;color:var(--text-dim);">Team projection $</label>
+          <input type="number" id="projInput" step="1000" style="width:120px;">
+          <button class="btn sm" id="projConfirm">Confirm</button>
+          <span id="projState" style="font-size:11px;color:var(--text-dim);"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Growth metrics <span class="lock-note" id="growthLock">Auto-pulled · read-only</span></h3>
+      <p class="blocknote" id="pipeNote">New business closed by month. The TTM total sits left of the monthly series.</p>
+      <div class="tbl-wrap"><table class="metrics" id="pipelineTable"></table></div>
+    </div>
+
+    <div class="block" id="mhrBlock" style="display:none;">
+      <h3>Client health reports <span class="lock-note">Auto-pulled &middot; read-only</span></h3>
+      <p class="blocknote">Measurable: client health reports delivered by business day 15.</p>
+      <div id="mhrTile"></div>
+    </div>
+
+    <div class="block">
+      <h3>Operational SLAs <span class="lock-note" style="color:var(--steel);border-color:var(--steel);">Manual input</span></h3>
+      <p class="blocknote">Manual input until automated. Each bar is one period, labeled with its date; the current period is the white bar. Update this week's or this month's counts in the fields, or click an earlier bar to correct it.</p>
+      <div class="sla-grid" id="slaGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 2: ROCKS ============ -->
+  <section id="rocks">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Rocks</h2><span class="hint">Annual goals chunked into quarterly rocks. Roll items forward individually.</span></div>
+
+    <div class="qnav" id="qnav"></div>
+
+    <div class="block">
+      <h3>Corporate annual goals</h3>
+      <p class="blocknote">The year's goals, always visible. Quarterly rocks below ladder up to these.</p>
+      <div id="goalList"></div>
+      <div class="addbar">
+        <span class="ttl">Add annual goal</span>
+        <input type="text" id="goalText" placeholder="Goal, e.g. reach $10M revenue" style="flex:1;min-width:220px;">
+        <input type="text" id="goalTarget" placeholder="Target / metric" style="width:150px;">
+        <button class="btn sm" id="goalAdd">Add goal</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Corporate rocks <span id="corpQlabel" style="color:var(--steel);font-weight:600;"></span></h3>
+      <p class="blocknote">The company's priorities this quarter, always visible. Link each to an annual goal.</p>
+      <div id="corpRocks"></div>
+      <div class="addbar">
+        <span class="ttl">Add corporate rock</span>
+        <input type="text" id="crTitle" placeholder="Rock title" style="flex:1;min-width:200px;">
+        <select id="crOwner"></select>
+        <select id="crGoal"></select>
+        <button class="btn sm" id="crAdd">Add rock</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Individual rocks <span id="indQlabel" style="color:var(--steel);font-weight:600;"></span></h3>
+      <p class="blocknote">Grouped by department. Click a department to expand and see each person's rocks.</p>
+      <div class="rostbar">
+        <span class="ttl">Put people on the board</span>
+        <input type="text" id="personName" placeholder="Name" style="width:130px;">
+        <select id="personDept"></select>
+        <button class="btn sm" id="personAdd">Add person</button>
+        <span style="width:14px;"></span>
+        <input type="text" id="deptName" placeholder="New department" style="width:140px;">
+        <button class="btn sm" id="deptAdd">Add department</button>
+      </div>
+      <div style="margin:0 0 10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;">View</span>
+        <span class="qc-seg" id="indGroupSeg"><button data-g="function">By function</button><button data-g="person">By person</button></span>
+        <span style="width:6px;"></span>
+        <button class="ghostbtn" id="expandAll">Expand all</button>
+        <button class="ghostbtn" id="collapseAll">Collapse all</button>
+      </div>
+      <div id="indRocks"></div>
+      <div class="addbar">
+        <span class="ttl">Add a rock to a person</span>
+        <input type="text" id="irTitle" placeholder="Rock title" style="flex:1;min-width:200px;">
+        <select id="irOwner"></select>
+        <select id="irDept"></select>
+        <select id="irGoal"></select>
+        <select id="irCorp"></select>
+        <button class="btn sm" id="irAdd">Add rock</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3: HEADLINES ============ -->
+  <section id="headlines">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Headlines</h2><span class="hint">Fresh each week. Wins, blockers, callouts. No carry-forward.</span></div>
+    <div class="block">
+      <div class="additem">
+        <input type="text" id="headlineInput" placeholder="One-line win, blocker, or callout for this week" style="flex:1;min-width:240px;">
+        <button class="btn" id="headlineAdd">Add headline</button>
+      </div>
+      <div id="headlineList"></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4: IDS ============ -->
+  <section id="ids">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Issues (IDS)</h2><span class="hint">Identify, discuss, solve. Carries forward. Drag the grip to reprioritize.</span></div>
+    <div class="block">
+      <div id="idsSuggest"></div>
+      <div id="idsDup"></div>
+      <div class="additem">
+        <input type="text" id="idsTitle" placeholder="Issue title" style="flex:1;min-width:200px;">
+        <select id="idsOwner"></select>
+        <select id="idsPriority"><option>High</option><option selected>Medium</option><option>Low</option></select>
+        <button class="btn" id="idsAdd">Add issue</button>
+      </div>
+      <div id="idsList"></div>
+      <div style="margin-top:10px;"><button class="ghostbtn" id="archiveResolved">Hide resolved</button></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 5: TO-DOS ============ -->
+  <section id="todos">
+    <div class="sec-head"><span class="sec-num">05</span><h2>To-Dos</h2><span class="hint">Open ones carry forward. Completed ones clear out.</span></div>
+    <div class="block">
+      <p class="blocknote">Incomplete commitments carry into next week automatically. Mark one Complete and it drops off when you clear completed or start a new week. Delete any with the ✕.</p>
+      <div id="todoFlag"></div>
+      <div class="additem">
+        <input type="text" id="todoDesc" placeholder="Commitment" style="flex:1;min-width:200px;">
+        <select id="todoOwner"></select>
+        <input type="date" id="todoDue">
+        <button class="btn" id="todoAdd">Add to-do</button>
+      </div>
+      <div id="todoList"></div>
+      <div style="margin-top:10px;"><button class="ghostbtn" id="clearCompleted">Clear completed to-dos</button></div>
+    </div>
+  </section>
+
+  <section id="rating">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Rate the meeting</h2><span class="hint">Each person rates 1 to 10. Logged to history at week close.</span></div>
+    <div class="block">
+      <p class="blocknote">Everyone scores the meeting 1 to 10. The team average is logged when you start a new week, so you keep the running history.</p>
+      <div id="ratingArea"></div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <!-- EOS_ATTRIBUTION -->
+    <div id="storageNote" style="margin-bottom:8px;">
+      Your data is stored in this browser on this device only. It is never sent anywhere.
+      We cannot recover it. Back it up.
+    </div>
+    <div style="margin-bottom:8px;">
+      Provided as-is, with no support commitment.
+      <a href="#faq" id="faqLink" style="color:var(--steel);">Common questions</a>
+    </div>
+    <div style="font-size:10.5px;line-height:1.5;color:var(--gray);">
+      EOS, Entrepreneurial Operating System, Level 10 Meeting, and Vision/Traction Organizer are
+      trademarks of EOS Worldwide, LLC. This tool is independent and is not affiliated with,
+      endorsed by, or licensed by EOS Worldwide. If you work with an EOS Implementer, use the
+      tools they recommend.
+    </div>
+    <!-- /EOS_ATTRIBUTION -->
+    <div style="margin-top:8px;font-size:10.5px;color:var(--gray);">
+      EOS Dashboard <span id="verStamp">v2.2.1</span> · <span id="modeStamp"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =================================================================
+   MODE. Resolved synchronously, before any network call is possible.
+   Internal mode is the private gated path only, over https. Anywhere
+   else (a public path, a client's own host, a saved local file) is
+   standalone: no network, no shared state, browser storage only.
+   ================================================================= */
+var EOS_HOME_HOSTS    = ["jarvis-mobile-hosting.pages.dev"];
+var EOS_INTERNAL_PATH = "/eos/";
+var EOS_PUBLIC_PATHS  = ["/eos-dashboard/"];
+
+var CAPS = Object.freeze(function(){
+  var h=location.hostname, p=location.pathname, https=location.protocol==="https:";
+  var dev=new URLSearchParams(location.search).get("dev")==="1";
+  var onHome     = EOS_HOME_HOSTS.indexOf(h)!==-1 && https;
+  var onInternal = (onHome && p.indexOf(EOS_INTERNAL_PATH)===0) || dev;
+  var onOurPub   = onHome && EOS_PUBLIC_PATHS.some(function(x){ return p.indexOf(x)===0; });
+  return onInternal
+    ? { mode:"internal", net:true,  shared:true,  feed:true,  profile:true,  setup:"prefill", knownHost:true  }
+    : { mode:"client",   mode_:"standalone", net:false, shared:false, feed:false, profile:false, setup:"require", knownHost:onOurPub };
+}());
+
+/* Single network chokepoint. No other call site exists in this file. */
+async function net(u,o){                        /* EOS_NET_CHOKEPOINT */
+  if(!CAPS.net) throw new Error("EOS_OFFLINE");
+  return fetch(u,o);
+}
+
+/* =================================================================
+   CLOCK. Real system clock. ?today= is test-only, never documented.
+   ================================================================= */
+var _eosQS = new URLSearchParams(location.search);
+var NOW = _eosQS.get("today") ? new Date(_eosQS.get("today")) : new Date();
+if(isNaN(NOW)) NOW = new Date();
+const QUARTERS = ["Q1","Q2","Q3","Q4"];
+const CUR_YEAR = String(NOW.getFullYear());
+const CUR_Q = "Q" + (Math.floor(NOW.getMonth()/3) + 1);
+const MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+/* Trailing twelve months ending with the current month. */
+function trailing12(){
+  var out=[], d=new Date(NOW.getFullYear(), NOW.getMonth(), 1);
+  for(var i=11;i>=0;i--){ var m=new Date(d.getFullYear(), d.getMonth()-i, 1); out.push(MONTH_ABBR[m.getMonth()]); }
+  return out;
+}
+function isoToday(){ return NOW.toISOString().slice(0,10); }
+/* Local-date ISO, so a meeting date never shifts a day from a UTC conversion. */
+function isoLocal(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+/* This week's meeting date, derived from the configured meeting day.
+   Previously the meeting date came from the feed and was deliberately frozen, so it
+   drifted a month stale. Deriving it means it is always right and needs no automation. */
+var DAY_IDX={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+/* `day` may be passed in. It MUST be when called from blankState(), because blankState()
+   runs inside the initializer of `let state = load()`, and reading `state` there throws a
+   temporal-dead-zone ReferenceError that kills the whole script before anything renders.
+   That only reproduces on a first-ever load with empty storage, which is every new user,
+   so the try/catch is a hard requirement and not defensive noise. */
+function currentMeetingDate(day){
+  if(!day){
+    try{ day=(state && state.config && state.config.meeting && state.config.meeting.day) || "Mon"; }
+    catch(e){ day="Mon"; }
+  }
+  var want=DAY_IDX[day]; if(want===undefined) want=1;
+  var d=new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate());
+  /* Monday-based week: step back to this week's Monday, then forward to the target day. */
+  var dow=d.getDay(), backToMon=(dow===0?6:dow-1);
+  d.setDate(d.getDate()-backToMon);
+  d.setDate(d.getDate()+((want===0?7:want)-1));
+  return isoLocal(d);
+}
+function meetingDateLabel(){
+  var iso=currentMeetingDate();
+  var d=new Date(iso+"T12:00:00");
+  var rel = iso===isoLocal(NOW) ? " (today)"
+          : (new Date(iso+"T12:00:00") > NOW ? " (upcoming)" : "");
+  return iso+rel;
+}
+
+/* =================================================================
+   STORAGE. Two-phase boot: identity resolves with NO dependency on
+   `state`, so the key can never be recomputed once data exists.
+   Every read and write goes through storeGet / storeSet.
+   ================================================================= */
+var INSTALL_META_KEY = "eos-dash-install";
+var INSTALL_ID = (function(){
+  try{ var raw=localStorage.getItem(INSTALL_META_KEY);
+       if(raw){ var m=JSON.parse(raw); if(m && m.installId) return m.installId; } }catch(e){}
+  var id="i"+Math.random().toString(36).slice(2,10);
+  try{ localStorage.setItem(INSTALL_META_KEY, JSON.stringify({installId:id})); }catch(e){}
+  return id;
+}());
+var STORE_PREFIX  = "eos-dash-state-v4::";
+var CURRENT_KEY   = STORE_PREFIX + INSTALL_ID;   /* resolved once, never recomputed */
+var LEGACY_KEY    = "eos-l10-state-v3";          /* migration source only */
+var MEM = {}, STORAGE_OK = true, _bannerShown = false;
+
+function storagePreflight(){
+  try{ localStorage.setItem("__eos_canary","1");
+       if(localStorage.getItem("__eos_canary")!=="1") throw 0;
+       localStorage.removeItem("__eos_canary"); return true; }
+  catch(e){ STORAGE_OK=false; return false; }
+}
+function storeGet(k){ try{ return STORAGE_OK ? localStorage.getItem(k) : MEM[k]; }
+                      catch(e){ STORAGE_OK=false; return MEM[k]; } }
+function storeSet(k,v){ try{ if(!STORAGE_OK) throw 0; localStorage.setItem(k,v); }
+                        catch(e){ STORAGE_OK=false; MEM[k]=v; storageBanner(); } }
+function storeRemove(k){ try{ localStorage.removeItem(k); }catch(e){} delete MEM[k]; }
+
+/* =================================================================
+   DATA FOLDER (optional). Lets the user say where their data file lives.
+
+   Browser storage stays the live store: it is fast, universal, and works
+   offline in every browser. The chosen folder is where the file is KEPT, so
+   the data survives a cleared cache or a new laptop, and so the user's own
+   OneDrive / SharePoint / Dropbox can sync it offsite.
+
+   This is deliberately NOT a shared live store. Two people writing the same
+   synced file produces conflict copies, not a merge. Use Publish and Absorb
+   for team updates. The setup copy says so plainly.
+
+   Availability: showDirectoryPicker is Chromium only (Chrome, Edge) and needs
+   a non-opaque secure origin, so it is unavailable on Safari, on Firefox, and
+   on a page opened directly from disk. Every one of those paths falls back to
+   a deterministic filename plus the browser's own download folder, which the
+   user can point at the same synced folder once. Same outcome, no API needed.
+   ================================================================= */
+var FS_OK = (typeof window.showDirectoryPicker === "function") && window.isSecureContext;
+var IDB_NAME = "eos-dash-fs", IDB_STORE = "handles", IDB_KEY = "dataDir";
+var _dirHandle = null, _fsWriteTimer = null, _fsState = "off"; /* off|connected|needs-permission|error */
+
+function idb(){
+  return new Promise(function(res,rej){
+    try{
+      var r=indexedDB.open(IDB_NAME,1);
+      r.onupgradeneeded=function(){ r.result.createObjectStore(IDB_STORE); };
+      r.onsuccess=function(){ res(r.result); };
+      r.onerror=function(){ rej(r.error); };
+    }catch(e){ rej(e); }
+  });
+}
+function idbPut(k,v){
+  return idb().then(function(db){ return new Promise(function(res,rej){
+    var tx=db.transaction(IDB_STORE,"readwrite");
+    tx.objectStore(IDB_STORE).put(v,k);
+    tx.oncomplete=function(){ res(true); }; tx.onerror=function(){ rej(tx.error); };
+  });});
+}
+function idbGet(k){
+  return idb().then(function(db){ return new Promise(function(res,rej){
+    var tx=db.transaction(IDB_STORE,"readonly");
+    var q=tx.objectStore(IDB_STORE).get(k);
+    q.onsuccess=function(){ res(q.result||null); }; q.onerror=function(){ rej(q.error); };
+  });});
+}
+function idbDel(k){
+  return idb().then(function(db){ return new Promise(function(res){
+    var tx=db.transaction(IDB_STORE,"readwrite");
+    tx.objectStore(IDB_STORE).delete(k);
+    tx.oncomplete=function(){ res(true); }; tx.onerror=function(){ res(false); };
+  });});
+}
+
+function dataFileName(){
+  return "EOS-Dashboard-" + slugify((state && state.company && state.company.name) || "board") + ".json";
+}
+/* Chrome returns 'prompt' after a reload, and requestPermission needs a user
+   gesture, so a silent write on boot is not possible. We surface one button. */
+function fsVerify(handle, interactive){
+  if(!handle || !handle.queryPermission) return Promise.resolve(false);
+  var opts={mode:"readwrite"};
+  return handle.queryPermission(opts).then(function(p){
+    if(p==="granted") return true;
+    if(!interactive) return false;
+    return handle.requestPermission(opts).then(function(p2){ return p2==="granted"; });
+  }).catch(function(){ return false; });
+}
+function fsSetState(s){
+  _fsState=s;
+  if(state && state.config){ state.config.folderState=s; }
+  renderBackupPill();
+}
+/* Pick a folder. Must be called from a click: the picker requires a gesture. */
+function pickDataFolder(){
+  if(!FS_OK){
+    toast("This browser cannot choose a folder. Use the download fallback below.");
+    return Promise.resolve(false);
+  }
+  return window.showDirectoryPicker({ id:"eos-data", mode:"readwrite", startIn:"documents" })
+    .then(function(h){
+      _dirHandle=h;
+      return fsVerify(h,true).then(function(ok){
+        if(!ok){ fsSetState("needs-permission"); toast("Permission was not granted"); return false; }
+        state.config.folderName=h.name;
+        state.config.folderEnabled=true;
+        return writeToFolder(true).then(function(){
+          fsSetState("connected");
+          return idbPut(IDB_KEY,h).then(function(){
+            save(); renderSetup(); renderBackupPill();
+            toast("Data folder set to " + h.name);
+            return true;
+          });
+        });
+      });
+    })
+    .catch(function(e){
+      if(e && e.name==="AbortError") return false;   /* user cancelled, not an error */
+      fsSetState("error");
+      banner("warn","<b>Could not use that folder.</b> "+escapeHtml(e && e.message || "Unknown error")+
+        " Your work is still saved in this browser.");
+      return false;
+    });
+}
+function disconnectDataFolder(){
+  _dirHandle=null;
+  state.config.folderEnabled=false;
+  state.config.folderName=null;
+  fsSetState("off");
+  return idbDel(IDB_KEY).then(function(){ save(); renderSetup(); renderBackupPill();
+    toast("Data folder disconnected. Your work stays in this browser."); });
+}
+function writeToFolder(force){
+  if(!_dirHandle || !state.config.folderEnabled) return Promise.resolve(false);
+  return fsVerify(_dirHandle,false).then(function(ok){
+    if(!ok){ fsSetState("needs-permission"); return false; }
+    return _dirHandle.getFileHandle(dataFileName(),{create:true})
+      .then(function(fh){ return fh.createWritable(); })
+      .then(function(w){ return w.write(JSON.stringify(state,null,1)).then(function(){ return w.close(); }); })
+      .then(function(){
+        state.config.lastFolderWriteAt=new Date().toISOString();
+        state.config.lastBackupAt=state.config.lastFolderWriteAt;
+        storeSet(CURRENT_KEY,JSON.stringify(state));
+        fsSetState("connected"); renderBackupPill();
+        return true;
+      })
+      .catch(function(e){
+        fsSetState("error");
+        if(force) banner("warn","<b>Could not write to your data folder.</b> "+
+          escapeHtml(e && e.message||"")+" Your work is still saved in this browser.");
+        return false;
+      });
+  });
+}
+/* Debounced, so typing does not write a file per keystroke. */
+function scheduleFolderWrite(){
+  if(!_dirHandle || !state.config.folderEnabled) return;
+  clearTimeout(_fsWriteTimer);
+  _fsWriteTimer=setTimeout(function(){ writeToFolder(false); }, 2500);
+}
+function readFromFolder(){
+  if(!_dirHandle) return Promise.resolve(null);
+  return _dirHandle.getFileHandle(dataFileName(),{create:false})
+    .then(function(fh){ return fh.getFile(); })
+    .then(function(f){ return f.text(); })
+    .then(function(t){ try{ return JSON.parse(t); }catch(e){ return null; } })
+    .catch(function(){ return null; });
+}
+/* On boot: reconnect the folder, and if its file is newer than this browser's
+   copy, offer to load it. Never silently overwrite what is on screen. */
+function reconnectDataFolder(){
+  if(!FS_OK) return Promise.resolve();
+  return idbGet(IDB_KEY).then(function(h){
+    if(!h) return;
+    _dirHandle=h;
+    if(!state.config.folderName) state.config.folderName=h.name;
+    return fsVerify(h,false).then(function(ok){
+      if(!ok){
+        fsSetState("needs-permission");
+        banner("warn","<b>Reconnect your data folder</b> ("+escapeHtml(h.name)+
+          ") so changes keep saving there. Your work is safe in this browser meanwhile.",
+          "Reconnect", function(){
+            fsVerify(_dirHandle,true).then(function(granted){
+              if(granted){ _banners=[]; renderBanners(); fsSetState("connected");
+                checkFolderNewer(); writeToFolder(false); toast("Data folder reconnected"); }
+              else toast("Permission was not granted");
+            });
+          });
+        return;
+      }
+      fsSetState("connected");
+      return checkFolderNewer();
+    });
+  }).catch(function(){ /* IndexedDB unavailable: folder feature simply stays off */ });
+}
+function checkFolderNewer(){
+  return readFromFolder().then(function(inc){
+    if(!inc || !inc._rev) return;
+    var localRev=state._rev||0;
+    if(inc._rev>localRev){
+      var when=new Date(inc._rev).toLocaleString();
+      banner("info","<b>Your data folder has a newer copy</b> (saved "+escapeHtml(when)+
+        "). This browser's copy is older.","Load the newer copy",function(){
+          var st=mergeState(state,inc);
+          if(inc.vto && vtoFilled()===0) state.vto=inc.vto;
+          if(inc.company && !(state.company.name||"").trim()) state.company=inc.company;
+          if(inc.config){ state.config.folderEnabled=true; }
+          syncRosterFromCompany(); save(); renderAll();
+          _banners=[]; renderBanners();
+          toast("Loaded from your folder: "+st.added+" new, "+st.updated+" updated");
+          logActivity("Loaded a newer copy from the data folder");
+        });
+    }
+  });
+}
+
+/* =================================================================
+   FEED. Zero-valued shape only. Real numbers live in eos-feed.json
+   and are merged at runtime in internal mode. Nothing proprietary
+   is ever hardcoded in this file.
+   ================================================================= */
+const FEED = {
+  meetingDate: isoToday(),
+  pulledAt: { qbo: "not connected", hubspot: "not connected" },
+  activeClients: 0,
+  months: trailing12(),
+  revenue: [0,0,0,0,0,0,0,0,0,0,0,0],
+  projection: 0,
+  pipeline: {
+    meetings: [0,0,0,0,0,0,0,0,0,0,0,0],
+    bookings: [0,0,0,0,0,0,0,0,0,0,0,0],
+    arr:      [0,0,0,0,0,0,0,0,0,0,0,0]
+  },
+  sla: {
+    forecast: { series:[0,0,0,0,0,0,0,0,0,0,0,0], curNum:0, curDen:0 },
+    close:    { series:[0,0,0,0,0,0,0,0,0,0,0,0], curNum:0, curDen:0 }
+  }
+};
+
+/* =================================================================
+   BLANK STATE. There is no seed data in this file, by construction.
+   Nothing here names a person, a company, a client, or a number.
+   Configuration arrives from the setup section (standalone mode) or
+   from eos-profile.json (internal mode).
+   ================================================================= */
+function emptyVto(){
+  var yr = NOW.getFullYear();
+  return {
+    horizonYears: 3,
+    coreFocus: { purpose:"", niche:"" },
+    values: [],
+    bhag: { statement:"", by:String(yr+10) },
+    tenYear: { target:"", by:String(yr+10), percent:0 },
+    picture: { revenue:"", profit:"", measurables:"", bullets:[] },
+    oneYear: { revenue:"", profit:"", measurables:"" },
+    marketing: { targetMarket:"", uniques:[], process:"", guarantee:"" },
+    history: {}
+  };
+}
+function blankPlans(){
+  var p={}; p[CUR_YEAR]={ annualGoals:[], quarters:{Q1:{rocks:[]},Q2:{rocks:[]},Q3:{rocks:[]},Q4:{rocks:[]}} };
+  return p;
+}
+function blankState(){
+  var plans=blankPlans();
+  return {
+    schema: 4,
+    config: { setupComplete:false, setupAt:null, fyStartMonth:1,
+              meeting:{ day:"Mon", time:"09:00", durationMin:90 },
+              demoLoaded:false, lastBackupAt:null, lastRemoteCount:0,
+              installId: INSTALL_ID, storageOk:true,
+              /* optional data folder, see the DATA FOLDER block */
+              folderEnabled:false, folderName:null, folderState:"off",
+              lastFolderWriteAt:null },
+    company: { name:"", people:[] },
+    meetingDate: currentMeetingDate("Mon"),   /* explicit: state is in TDZ here */
+    revenue: FEED.revenue.slice(),
+    projection: FEED.projection,
+    projectionConfirmed: false,
+    pipeline: { meetings:FEED.pipeline.meetings.slice(), bookings:FEED.pipeline.bookings.slice(), arr:FEED.pipeline.arr.slice() },
+    sla: JSON.parse(JSON.stringify(FEED.sla)),
+    roster: { departments:[], people:[] },
+    scorecard: { rows:[] },
+    plans: plans,
+    vto: emptyVto(),
+    view: { year: CUR_YEAR, quarter: CUR_Q },
+    openDepts: {},
+    headlines: [], ids: [], todos: [],
+    ratings: {}, ratingHistory: [], raters: [],
+    hideResolved: false,
+    timer: { segment:0, startedAt:null, elapsed:{} },
+    activity: []
+  };
+}
+
+/* ---- v3 to v4 migration. Never shows an existing user a wizard. ---- */
+function migrate(old){
+  if(!old || typeof old!=="object") return null;
+  if(old.schema===4) return old;
+  var s=blankState();
+  /* carry every v3 field forward, renaming sam to pipeline */
+  ["meetingDate","revenue","projection","projectionConfirmed","sla","roster","plans",
+   "view","openDepts","headlines","ids","todos","ratings","ratingHistory","raters",
+   "hideResolved","_rev"].forEach(function(k){ if(old[k]!==undefined) s[k]=old[k]; });
+  if(old.sam)      s.pipeline = old.sam;
+  if(old.pipeline) s.pipeline = old.pipeline;
+  if(old.vto)      s.vto = old.vto;
+  /* a v3 blob means a configured existing user: never re-run setup */
+  s.config.setupComplete = true;
+  s.config.setupAt = s.config.setupAt || new Date().toISOString();
+  if(old.roster && old.roster.people && old.roster.people.length){
+    s.company.people = old.roster.people.map(function(p,i){
+      return { id:"p"+(i+1), name:p.name, seat:p.dept||"", seatCanonical:null, order:i };
+    });
+  }
+  s.schema=4;
+  return s;
+}
+
+let state = load();
+function load(){
+  /* 1. current v4 record for this install */
+  try{ var cur=JSON.parse(storeGet(CURRENT_KEY)); if(cur && cur.schema===4) return cur; }catch(e){}
+  /* 2. migrate a v3 record if one exists */
+  try{ var legacy=JSON.parse(storeGet(LEGACY_KEY));
+       if(legacy){ var m=migrate(legacy); if(m){ storeSet(CURRENT_KEY, JSON.stringify(m)); return m; } } }catch(e){}
+  /* 3. adopt any other v4 record already in this browser bucket.
+        file:// shares one bucket across local files, so this prevents a
+        fresh-looking board when the user's real board is present. */
+  try{
+    var keys=[]; for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i);
+      if(k && k.indexOf(STORE_PREFIX)===0) keys.push(k); }
+    if(keys.length===1){ var only=JSON.parse(storeGet(keys[0])); if(only && only.schema===4) return only; }
+    if(keys.length>1){ window._eosMultiKeys=keys; }
+  }catch(e){}
+  return blankState();
+}
+function save(){
+  state._rev = Date.now();
+  state.config = state.config || {};
+  state.config.storageOk = STORAGE_OK;
+  storeSet(CURRENT_KEY, JSON.stringify(state));
+  scheduleFolderWrite();
+  syncUp();
+}
+/* Total item count, used by the empty-over-populated write guard. */
+function itemCount(s){
+  try{
+    var n=(s.ids||[]).length+(s.todos||[]).length+(s.headlines||[]).length;
+    Object.keys(s.plans||{}).forEach(function(y){
+      n+=(s.plans[y].annualGoals||[]).length;
+      QUARTERS.forEach(function(q){ n+=((s.plans[y].quarters||{})[q]||{rocks:[]}).rocks.length; });
+    });
+    return n;
+  }catch(e){ return 0; }
+}
+const uid = () => Math.random().toString(36).slice(2,8);
+
+/* live feed + shared-state sync */
+const API_STATE = "/api/state";
+let _syncTimer = null;
+function setPill(mode){
+  const p=document.getElementById("syncPill"); if(!p) return;
+  if(mode==="shared"){ p.textContent="● Live with team"; p.style.color="var(--green)"; p.style.borderColor="var(--green)"; }
+  else if(mode==="saving"){ p.textContent="● Saving…"; p.style.color="var(--amber)"; p.style.borderColor="var(--amber)"; }
+  else { p.textContent="● Local only"; p.style.color="var(--text-dim)"; p.style.borderColor="var(--bg-soft)"; }
+}
+function syncUp(){
+  clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(()=>{ setPill("saving");
+    net(API_STATE,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(state)})
+      .then(r=>setPill(r.ok?"shared":"local")).catch(()=>setPill("local")); }, 600);
+}
+async function syncDown(){ try{ const r=await net(API_STATE,{cache:"no-store"}); if(r.ok){ const j=await r.json(); if(j && j.meetingDate) return j; } }catch(e){} return null; }
+async function loadFeed(){
+  try{
+    const r=await net("./eos-feed.json",{cache:"no-store"});
+    if(r.ok){
+      const j=await r.json();
+      /* Legacy feeds carry the pre-2.0.0 key name. Accept both so a feed written
+         by an older refresh run still populates the board instead of showing zeros. */
+      if(j.sam && !j.pipeline){ j.pipeline=j.sam; delete j.sam; }
+      Object.assign(FEED, j);
+    }
+  }catch(e){}
+}
+function applyFeed(){
+  state.revenue=FEED.revenue.slice();
+  state.pipeline={ meetings:FEED.pipeline.meetings.slice(), bookings:FEED.pipeline.bookings.slice(), arr:FEED.pipeline.arr.slice() };
+  if(!state.sla && FEED.sla) state.sla = JSON.parse(JSON.stringify(FEED.sla)); // SLAs are MANUAL input — only seed from feed if missing; never overwrite the user's edited bars
+  if(!state.projectionConfirmed) state.projection=FEED.projection;
+}
+function activelyEditing(){ const el=document.activeElement; return el && /^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName); }
+async function pullLatest(silent){
+  const s=await syncDown();
+  if(!s||!s.meetingDate){ if(!silent) setPill("local"); return; }
+  if(silent && (activelyEditing() || (state._rev && s._rev && s._rev<=state._rev))) return;
+  const keepView=state.view, keepOpen=state.openDepts;   // quarter view + collapse are per-user, not shared
+  state=s; if(keepView) state.view=keepView; if(keepOpen) state.openDepts=keepOpen;
+  storeSet(CURRENT_KEY, JSON.stringify(state)); renderAll(); setPill("shared");
+}
+
+/* helpers */
+const $ = s => document.querySelector(s);
+function money(n){ return Math.abs(n)>=1000 ? "$"+Math.round(n/1000)+"K" : "$"+n; }
+function moneyFull(n){ return "$"+Math.round(n).toLocaleString(); }
+function pct(num,den){ return den ? Math.round(num/den*100) : 0; }
+function slaClass(p){ return p>=90?"ok":p>=75?"warn":"bad"; }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function daysOverdue(due){ if(!due) return 0; return Math.round((NOW-new Date(due))/86400000); }
+function peopleNames(){ return state.roster.people.map(p=>p.name); }
+function deptOf(name){ const p=state.roster.people.find(x=>x.name===name); return p?p.dept:"Unassigned"; }
+function ownerOptions(sel,withCorp){ return (withCorp?`<option value="Corporate">Corporate</option>`:`<option value="">Owner…</option>`)+peopleNames().map(o=>`<option ${o===sel?'selected':''}>${escapeHtml(o)}</option>`).join(""); }
+let _toastTimer=null;
+function toast(msg){ let t=document.getElementById("eosToast"); if(!t){ t=document.createElement("div"); t.id="eosToast"; t.className="toast"; document.body.appendChild(t); } t.textContent=msg; t.style.display="block"; clearTimeout(_toastTimer); _toastTimer=setTimeout(()=>{ t.style.display="none"; },2600); }
+
+/* quarter timing */
+function quarterStart(year,q){ return new Date(+year, {Q1:0,Q2:3,Q3:6,Q4:9}[q], 1); }
+function weekOfQuarter(year,q){ const d=Math.floor((NOW-quarterStart(year,q))/86400000); return Math.min(13, Math.max(0, Math.floor(d/7)+1)); }
+function isCurrentPeriod(year,q){ return year===CUR_YEAR && q===CUR_Q; }
+function nextQuarterOf(year,q){ const i=QUARTERS.indexOf(q); return i<3 ? {year:year,quarter:QUARTERS[i+1]} : {year:String(+year+1),quarter:"Q1"}; }
+function ensurePlan(year){ if(!state.plans[year]) state.plans[year]={ annualGoals:[], quarters:{Q1:{rocks:[]},Q2:{rocks:[]},Q3:{rocks:[]},Q4:{rocks:[]}} }; }
+function curPlan(){ return state.plans[state.view.year]; }
+function curRocks(){ return curPlan().quarters[state.view.quarter].rocks; }
+
+/* ===================== SCORECARD (read-only) ===================== */
+function renderRevenue(){
+  const rev=state.revenue, mo=FEED.months, max=Math.max(...rev), cur=rev.length-1;
+  $("#revrow").innerHTML = rev.map((v,i)=>`
+    <div class="revbar ${i===cur?'cur':''}" title="${mo[i]}: ${moneyFull(v)}">
+      <span class="bval">${money(v)}</span><div class="bar" style="height:${Math.max(4,v/max*100)}%"></div><span class="bmo">${mo[i]}</span>
+    </div>`).join("");
+  const prior=rev.slice(0,cur), avg=prior.reduce((a,b)=>a+b,0)/prior.length, up=rev[cur]>=avg;
+  $("#revtrend").className="trend "+(up?"up":"down");
+  $("#revtrend").innerHTML=`${up?"▲":"▼"} ${money(rev[cur])} this month vs ${money(Math.round(avg))} prior avg`;
+  $("#revttm").textContent=moneyFull(rev.reduce((a,b)=>a+b,0));
+  $("#projQ").innerHTML=`Current month projection is <b>${moneyFull(state.projection)}</b>, against <b>${moneyFull(rev[cur])}</b> booked so far. Anything I am missing?`;
+  $("#projInput").value=state.projection;
+  $("#projState").textContent=state.projectionConfirmed?"Confirmed by team":"Default calculation stands";
+}
+function renderPipeline(){
+  const s=state.pipeline, mo=FEED.months, sum=a=>a.reduce((x,y)=>x+y,0), cur=mo.length-1;
+  const rows=[
+    {k:"meetings",label:"Meetings booked",fmt:v=>v,ttm:sum(s.meetings)},
+    {k:"bookings",label:"Deals closed",fmt:v=>v,ttm:sum(s.bookings)},
+    {k:"arr",label:"New ARR booked",fmt:v=>money(v),ttm:moneyFull(sum(s.arr))}
+  ];
+  let html="<thead><tr><th>Metric</th><th class='ttm'>TTM</th>"+mo.map(m=>`<th>${m}</th>`).join("")+"</tr></thead><tbody>";
+  rows.forEach(r=>{ html+=`<tr><td>${r.label}</td><td class="ttm">${r.ttm}</td>`+s[r.k].map((v,i)=>`<td class="${i===cur?'cur':''}">${r.fmt(v)}</td>`).join("")+"</tr>"; });
+  html+="</tbody>"; $("#pipelineTable").innerHTML=html;
+}
+function renderMHR(){
+  const m=FEED.mhr, blk=document.getElementById("mhrBlock"); if(!blk) return;
+  if(!m || !m.clients_total){ blk.style.display="none"; return; }
+  blk.style.display="";
+  const chip=(s)=>({delivered:["#3CB371","rgba(60,179,113,.28)"],drafted:["#3CB371","rgba(60,179,113,.12)"],
+    ready:["#3CB371","rgba(60,179,113,.12)"],blocked:["#D97706","rgba(217,119,6,.12)"],
+    waiting:["#4682B4","rgba(70,130,180,.10)"]}[s]||["#4682B4","rgba(70,130,180,.10)"]);
+  const lbl={delivered:"Delivered",drafted:"Drafted",ready:"Ready",blocked:"Gate failed",waiting:"Waiting"};
+  const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  let per=""; Object.entries(m.by_client||{}).forEach(([name,s])=>{ const c=chip(s);
+    per+=`<span style="border:1px solid ${c[0]};color:${c[0]};background:${c[1]};border-radius:14px;padding:2px 10px;font-size:11px;font-weight:700;margin:3px 6px 3px 0;display:inline-block;">${esc(name)}: ${lbl[s]||esc(s)}</span>`; });
+  /* Two independent staleness signals. Showing a dead figure in the same green as a
+     live one is how a retired measurable gets read as a current one.
+       1. Declared: the feed says source is "retired". This is the reliable signal,
+          because a retired source is a fact the writer knows and the reader cannot
+          infer from dates alone (freshly-retired data still looks recent).
+       2. Inferred: as_of has aged past a monthly cadence, so nothing is refreshing it. */
+  var ageDays  = m.as_of ? Math.floor((NOW - new Date(m.as_of+"T12:00:00"))/86400000) : null;
+  var retired  = m.source === "retired";
+  var aged     = (ageDays===null) || ageDays>45;
+  var stale    = retired || aged;
+  var numColor = stale ? "var(--gray)" : "#3CB371";
+  var staleNote = "";
+  if(retired){
+    staleNote = `<div class="banner warn" style="margin:0 0 10px;font-size:12px;"><div>
+      <b>Final numbers, no live source.</b> ${esc(m.source_note||"This measurable is no longer being produced.")}
+      Last measured ${esc(m.as_of||"unknown")} for period ${esc(m.period||"unknown")}.
+      Track it as a manual scorecard row, or remove this block.</div></div>`;
+  } else if(aged){
+    staleNote = `<div class="banner warn" style="margin:0 0 10px;font-size:12px;"><div>
+      <b>Not refreshing.</b> These numbers are frozen as of ${esc(m.as_of||"an unknown date")}
+      ${ageDays!==null?`(${ageDays} days ago)`:""}, which is past the monthly cadence.
+      Check whether the source that writes this is still running.</div></div>`;
+  }
+  document.getElementById("mhrTile").innerHTML= staleNote+
+    `<div style="display:flex;gap:26px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px;">
+       <div><span style="font-size:26px;font-weight:800;color:${numColor};">${m.on_time_pct}%</span>
+            <span style="font-size:12px;color:var(--text-dim,#889);"> on time${stale?" (frozen)":""}</span></div>
+       <div style="font-size:13px;">${m.delivered} of ${m.clients_total} delivered &middot; period ${esc(m.period)} &middot; due ${esc(m.due_date)}</div>
+       <div style="font-size:11px;color:var(--text-dim,#889);">as of ${esc(m.as_of)}</div>
+     </div><div>${per}</div>`;
+  /* Also correct the block's label: nothing here is auto-pulled any more. */
+  var lock=blk.querySelector(".lock-note");
+  if(lock && stale) lock.textContent = retired ? "Source retired · final" : "Not refreshing";
+}
+function weekTuesdayLabels(n){
+  const out=[]; const base=new Date(); const day=base.getDay(); const tue=new Date(base); tue.setDate(base.getDate()+(2-day));
+  for(let i=n-1;i>=0;i--){ const d=new Date(tue); d.setDate(tue.getDate()-i*7); out.push((d.getMonth()+1)+"/"+d.getDate()); }
+  return out;
+}
+let slaEdit = null;
+function renderSLA(){
+  const f=state.sla.forecast, c=state.sla.close, mo=FEED.months;
+  const wk=weekTuesdayLabels(f.series.length);
+  f.series[f.series.length-1]=pct(f.curNum,f.curDen);
+  c.series[c.series.length-1]=pct(c.curNum,c.curDen);
+  const fPct=pct(f.curNum,f.curDen), cPct=pct(c.curNum,c.curDen);
+  const fWow=fPct-f.series[f.series.length-2], cWow=cPct-c.series[c.series.length-2];
+  const wow=(d,u)=>{const cls=d<0?"down":d>0?"up":"flat",ar=d<0?"▼":d>0?"▲":"►";return `<span class="slawow ${cls}">${ar} ${d>0?'+':''}${d} pts vs prior ${u}</span>`;};
+  const bars=(o,labels,key)=>{ const max=Math.max(100,...o.series); return `<div class="slabars">`+o.series.map((v,i)=>{const cur=i===o.series.length-1,ed=slaEdit&&slaEdit.key===key&&slaEdit.i===i;return `<div class="slabar ${cur?'cur':''} ${ed?'editing':''}" data-key="${key}" data-i="${i}" title="${labels[i]}: ${v}%"><div class="b" style="height:${Math.max(3,v/max*100)}%"></div><div class="l">${labels[i]}</div></div>`;}).join("")+`</div>`; };
+  const editRow=(key,labels)=>{ if(!slaEdit||slaEdit.key!==key) return ""; const o=state.sla[key]; return `<div class="slaedit"><b>${labels[slaEdit.i]}</b> &nbsp;<input type="number" id="slaEditInput" min="0" max="100" value="${o.series[slaEdit.i]}"> %&nbsp;<span class="ehint">type and press Enter</span></div>`; };
+  $("#slaGrid").innerHTML=`
+    <div class="sla ${slaClass(fPct)}">
+      <div class="slatitle">13-week forecast delivered by Tuesday</div>
+      <div class="slaval">${fPct}%<small> week of ${wk[wk.length-1]}</small></div>${wow(fWow,"week")}
+      ${bars(f,wk,"forecast")}
+      ${editRow("forecast",wk)}
+      <div class="slacur">Each bar is one week, labeled by that Tuesday. Click an earlier bar to type its number. Current week: <b>${wk[wk.length-1]}</b>.</div>
+      <div class="slainputs">This week: sent by Tue <input type="number" id="fNum" value="${f.curNum}"> of <input type="number" id="fDen" value="${f.curDen}"> active clients</div>
+    </div>
+    <div class="sla ${slaClass(cPct)}">
+      <div class="slatitle">Month-end close by business day 5</div>
+      <div class="slaval">${cPct}%<small> ${mo[mo.length-1]}</small></div>${wow(cWow,"month")}
+      ${bars(c,mo,"close")}
+      ${editRow("close",mo)}
+      <div class="slacur">Each bar is one month. Click an earlier bar to type its number. Current month: <b>${mo[mo.length-1]}</b>.</div>
+      <div class="slainputs">This month: closed <input type="number" id="cNum" value="${c.curNum}"> of <input type="number" id="cDen" value="${c.curDen}"> active clients</div>
+    </div>`;
+  const bind=(id,obj,key,so)=>{ $("#"+id).onchange=e=>{ obj[key]=+e.target.value; so.series[so.series.length-1]=pct(so.curNum,so.curDen); save(); renderSLA(); renderReadiness(); renderIdsSuggest(); }; };
+  bind("fNum",f,"curNum",f); bind("fDen",f,"curDen",f); bind("cNum",c,"curNum",c); bind("cDen",c,"curDen",c);
+  $("#slaGrid").querySelectorAll(".slabar").forEach(b=>b.onclick=()=>{
+    const key=b.dataset.key, i=+b.dataset.i, o=state.sla[key];
+    if(i===o.series.length-1){ toast("Use the count fields below for the current period"); return; }
+    slaEdit={key,i}; renderSLA();
+  });
+  if(slaEdit){
+    const inp=document.getElementById("slaEditInput");
+    if(inp){
+      const editing={key:slaEdit.key,i:slaEdit.i}; let done=false;
+      inp.focus(); inp.select();
+      const commit=()=>{ if(done) return; done=true; const o=state.sla[editing.key], v=+inp.value; if(inp.value!=="" && !isNaN(v)) o.series[editing.i]=Math.max(0,Math.min(100,Math.round(v))); if(slaEdit && slaEdit.key===editing.key && slaEdit.i===editing.i) slaEdit=null; save(); renderSLA(); renderReadiness(); renderIdsSuggest(); };
+      inp.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); commit(); } else if(e.key==="Escape"){ done=true; slaEdit=null; renderSLA(); } };
+      inp.onblur=commit;
+    }
+  }
+}
+
+/* ===================== ROCKS ===================== */
+function goalById(id){ return curPlan().annualGoals.find(g=>g.id===id); }
+function corpRockById(id){ return curRocks().find(r=>r.id===id && r.type==="corporate"); }
+
+/* per-rock data binding — feed-backed, refreshed daily by the Level 10 pull */
+let dataEdit = null;
+const Q_END_MONTH = { Q1:"Mar", Q2:"Jun", Q3:"Sep", Q4:"Dec" };
+const Q_MONTHS = { Q1:["Jan","Feb","Mar"], Q2:["Apr","May","Jun"], Q3:["Jul","Aug","Sep"], Q4:["Oct","Nov","Dec"] };
+const DATA_METRICS = {
+  qbo:{ revenue:{ label:"Revenue", fmt:money, get:()=>state.revenue } },
+  hubspot:{
+    arr:{ label:"New ARR", fmt:money, get:()=>state.pipeline.arr },
+    bookings:{ label:"Deals closed", fmt:v=>String(v), get:()=>state.pipeline.bookings },
+    meetings:{ label:"Meetings", fmt:v=>String(v), get:()=>state.pipeline.meetings }
+  }
+};
+function dataMetricDef(d){ return d && DATA_METRICS[d.source] && DATA_METRICS[d.source][d.metric]; }
+function periodHasData(year,quarter){ return year===CUR_YEAR && QUARTERS.indexOf(quarter) <= QUARTERS.indexOf(CUR_Q); }
+function resolveRockData(d,year,quarter){
+  const def=dataMetricDef(d); if(!def) return null;
+  if(!periodHasData(year,quarter)) return {pending:true};
+  const arr=def.get(); if(!arr) return {pending:true};
+  if(d.mode==="quarter"){
+    const idxs=Q_MONTHS[quarter].map(n=>FEED.months.indexOf(n)).filter(i=>i>=0);
+    if(!idxs.length) return {pending:true};
+    return { value:idxs.reduce((s,i)=>s+(arr[i]||0),0), fmt:def.fmt, label:def.label, period:quarter+" total", partial:idxs.length<3 };
+  }
+  const idx=FEED.months.indexOf(Q_END_MONTH[quarter]);
+  if(idx<0) return {pending:true};
+  return { value:arr[idx]||0, fmt:def.fmt, label:def.label, period:Q_END_MONTH[quarter] };
+}
+function dataEditor(r){
+  const d=r.data||{source:"qbo",metric:"revenue",mode:"month"};
+  const metricOpts=Object.keys(DATA_METRICS[d.source]).map(k=>`<option value="${k}" ${k===d.metric?'selected':''}>${DATA_METRICS[d.source][k].label}</option>`).join("");
+  return `<div class="dataedit">
+    <select class="deSrc" data-id="${r.id}"><option value="qbo" ${d.source==='qbo'?'selected':''}>QuickBooks</option><option value="hubspot" ${d.source==='hubspot'?'selected':''}>HubSpot</option></select>
+    <select class="deMetric" data-id="${r.id}">${metricOpts}</select>
+    <select class="deMode" data-id="${r.id}"><option value="month" ${d.mode==='month'?'selected':''}>Quarter-end month</option><option value="quarter" ${d.mode==='quarter'?'selected':''}>Quarter total</option></select>
+    <span class="ehint">${state.view.quarter} ${state.view.year} · auto-refreshed daily</span>
+  </div>`;
+}
+
+function renderQuarterNav(){
+  const years=Object.keys(state.plans).sort(), v=state.view, wk=weekOfQuarter(v.year,v.quarter);
+  const rocks=curRocks(), corpN=rocks.filter(r=>r.type==="corporate").length, indN=rocks.filter(r=>r.type==="individual").length;
+  $("#qnav").innerHTML=`
+    <label>Year</label>
+    <select id="yearSel">${years.map(y=>`<option ${y===v.year?'selected':''}>${y}</option>`).join("")}</select>
+    <button class="ghostbtn" id="addYear">+ New year (fresh start)</button>
+    <span class="seg" id="qseg">${QUARTERS.map(q=>`<button class="${q===v.quarter?'on':''} ${isCurrentPeriod(v.year,q)?'cur-period':''}" data-q="${q}">${q}${isCurrentPeriod(v.year,q)?'<span class="nowtag">now</span>':''}</button>`).join("")}</span>
+    <div class="ctxline"><b>${v.quarter} ${v.year}</b> ${isCurrentPeriod(v.year,v.quarter)?`· <span class="wk">week ${wk} of 13</span>`:`· ${v.year>CUR_YEAR||(v.year===CUR_YEAR&&v.quarter>CUR_Q)?'upcoming':'past'}`} · ${corpN} corporate rock${corpN!==1?'s':''}, ${indN} individual</div>`;
+  $("#yearSel").onchange=e=>{ state.view.year=e.target.value; save(); renderRocksArea(); };
+  $("#addYear").onclick=()=>{ const y=prompt("Create a fresh plan year (no goals or rocks; prior years stay in the dropdown):", String(+CUR_YEAR+1)); if(y && /^\d{4}$/.test(y)){ ensurePlan(y); state.view={year:y,quarter:"Q1"}; save(); renderRocksArea(); toast(`Started ${y} with a clean slate`); } };
+  $("#qseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ state.view.quarter=b.dataset.q; save(); renderRocksArea(); });
+  $("#corpQlabel").textContent=`· ${v.quarter} ${v.year}`;
+  $("#indQlabel").textContent=`· ${v.quarter} ${v.year}`;
+}
+
+function rollRock(id){
+  const nq=nextQuarterOf(state.view.year,state.view.quarter); ensurePlan(nq.year);
+  const r=curRocks().find(x=>x.id===id); if(!r) return;
+  const to=state.plans[nq.year].quarters[nq.quarter].rocks;
+  if(to.some(t=>t.title===r.title && t.owner===r.owner)){ toast(`Already in ${nq.quarter} ${nq.year}`); return; }
+  to.push({...r, id:uid()}); save(); toast(`Rolled "${r.title}" to ${nq.quarter} ${nq.year}`); renderRocksArea();
+}
+function carryGoal(id){
+  const ny=String(+state.view.year+1); ensurePlan(ny);
+  const g=goalById(id); if(!g) return;
+  if(state.plans[ny].annualGoals.some(x=>x.text===g.text)){ toast(`Already in ${ny}`); return; }
+  state.plans[ny].annualGoals.push({...g, id:uid()}); save(); toast(`Carried "${g.text}" to ${ny}`);
+}
+
+let goalNotesOpen = {};
+function deptOptions(sel){ let ds=state.roster.departments.slice(); if(sel&&!ds.includes(sel)) ds.push(sel); return ds.map(d=>`<option ${d===sel?'selected':''}>${escapeHtml(d)}</option>`).join(""); }
+function renderGoals(){
+  const goals=curPlan().annualGoals, v=state.view, wk=weekOfQuarter(CUR_YEAR,CUR_Q);
+  const todayFrac = v.year===CUR_YEAR ? (QUARTERS.indexOf(CUR_Q)+(wk/13))/4 : (v.year<CUR_YEAR?1:0);
+  const ny=String(+v.year+1);
+  if(!goals.length){ $("#goalList").innerHTML=`<p class="blocknote">No annual goals set for ${v.year}. Add the year's goals below.</p>`; return; }
+  $("#goalList").innerHTML=goals.map(g=>{
+    const st=g.percent>=70?"ontrack":g.percent>=40?"atrisk":"offtrack";
+    return `<div class="goal">
+      <div class="goal-top">
+        <input class="goal-name" data-id="${g.id}" value="${escapeHtml(g.text)}">
+        <input class="goal-target" data-id="${g.id}" value="${escapeHtml(g.target||'')}" placeholder="target">
+        <select class="goal-owner" data-id="${g.id}" title="Owner">${ownerOptions(g.owner||'',false)}</select>
+        <span class="pctwrap"><input type="range" min="0" max="100" value="${g.percent}" class="goalPct" data-id="${g.id}"><span class="pctval">${g.percent}%</span></span>
+        <button class="goalNotesBtn ${goalNotesOpen[g.id]?'on':''}" data-id="${g.id}">${goalNotesOpen[g.id]?'▾':'▸'} Notes${(g.notes&&g.notes.trim())?' •':''}</button>
+        <button class="rollbtn goalCarry" data-id="${g.id}">↪ carry to ${ny}</button>
+        <button class="iconbtn goalDel" data-id="${g.id}">✕</button>
+      </div>
+      <div class="timeline"><div class="tl-cells">${QUARTERS.map(q=>`<div>${q}</div>`).join("")}</div><div class="tl-fill s-${st}" style="width:${g.percent}%"></div><div class="tl-today" style="left:${todayFrac*100}%"></div></div>
+      ${/ARR/i.test(g.text)&&FEED.arrRunRate?`<div class="goalsub">QuickBooks run-rate: <b>${moneyFull(FEED.arrRunRate)}</b> <span class="gsmall">(last completed month recurring × 12 · refreshed daily)</span></div>`:''}
+      ${goalNotesOpen[g.id]?`<div class="goalnotes"><textarea class="goalNotes" data-id="${g.id}" placeholder="Comments, context, blockers (saved automatically)">${escapeHtml(g.notes||'')}</textarea></div>`:''}
+    </div>`;
+  }).join("");
+  $("#goalList").querySelectorAll(".goalPct").forEach(s=>{
+    s.oninput=()=>{ goalById(s.dataset.id).percent=+s.value; save(); s.closest(".pctwrap").querySelector(".pctval").textContent=s.value+"%"; s.closest(".goal").querySelector(".tl-fill").style.width=s.value+"%"; renderReadiness(); };
+    s.onchange=()=>{ renderGoals(); renderIdsSuggest(); };
+  });
+  $("#goalList").querySelectorAll(".goal-name").forEach(inp=>inp.onchange=()=>{ const g=goalById(inp.dataset.id); const nw=inp.value.trim(); if(!nw){ inp.value=g.text; return; } g.text=nw; save(); refreshGoalSelects(); });
+  $("#goalList").querySelectorAll(".goal-target").forEach(inp=>inp.onchange=()=>{ const g=goalById(inp.dataset.id); g.target=inp.value.trim(); save(); });
+  $("#goalList").querySelectorAll(".goal-owner").forEach(sel=>sel.onchange=()=>{ goalById(sel.dataset.id).owner=sel.value; save(); });
+  $("#goalList").querySelectorAll(".goalNotesBtn").forEach(b=>b.onclick=()=>{ goalNotesOpen[b.dataset.id]=!goalNotesOpen[b.dataset.id]; renderGoals(); });
+  $("#goalList").querySelectorAll(".goalNotes").forEach(t=>t.oninput=()=>{ goalById(t.dataset.id).notes=t.value; save(); });
+  $("#goalList").querySelectorAll(".goalCarry").forEach(b=>b.onclick=()=>carryGoal(b.dataset.id));
+  $("#goalList").querySelectorAll(".goalDel").forEach(b=>b.onclick=()=>{ curPlan().annualGoals=curPlan().annualGoals.filter(g=>g.id!==b.dataset.id); save(); renderGoals(); refreshGoalSelects(); });
+}
+
+function rockCard(r,cls){
+  const wk=weekOfQuarter(state.view.year,state.view.quarter);
+  const todayFrac=isCurrentPeriod(state.view.year,state.view.quarter)?wk/13:(state.view.year<CUR_YEAR||(state.view.year===CUR_YEAR&&state.view.quarter<CUR_Q)?1:0);
+  const g=r.goal?goalById(r.goal):null, cr=r.corp?corpRockById(r.corp):null;
+  const nq=nextQuarterOf(state.view.year,state.view.quarter);
+  let chips="";
+  if(g) chips+=`<span class="linkchip goal-link">▲ Goal: ${escapeHtml(g.text.length>34?g.text.slice(0,34)+'…':g.text)}</span>`;
+  if(cr) chips+=`<span class="linkchip">▲ Rock: ${escapeHtml(cr.title.length>30?cr.title.slice(0,30)+'…':cr.title)}</span>`;
+  if(r.type==="individual" && !g && !cr) chips+=`<span class="linkchip unlinked">stands alone</span>`;
+  if(r.data){
+    const res=resolveRockData(r.data,state.view.year,state.view.quarter), def=dataMetricDef(r.data);
+    const srcL=r.data.source==="qbo"?"QBO":"HubSpot";
+    if(def && res && !res.pending) chips+=`<span class="linkchip data-chip" title="Auto-pulled · refreshed daily">⟲ ${srcL} · ${def.label} (${res.period}): ${res.fmt(res.value)}${res.partial?' · partial':''}</span>`;
+    else chips+=`<span class="linkchip unlinked" title="No daily pull covers this period yet">⟲ ${srcL} · ${def?def.label:''}: awaiting data</span>`;
+    chips+=`<button class="rollbtn dataEditBtn" data-id="${r.id}" title="Change data link">✎ data</button><button class="iconbtn dataUnlink" data-id="${r.id}" title="Remove data link">✕</button>`;
+  } else {
+    chips+=`<button class="rollbtn dataLinkBtn" data-id="${r.id}">🔗 Link to data</button>`;
+  }
+  chips+=`<button class="rollbtn rockRoll" data-id="${r.id}">↪ roll to ${nq.quarter} ${nq.year}</button>`;
+  const seg=(s,lab,c)=>`<button class="${r.status===s?'on '+c:''}" data-id="${r.id}" data-s="${s}">${lab}</button>`;
+  return `<div class="rock ${cls}" data-id="${r.id}">
+    <div class="rock-top">
+      <span class="rock-name">${escapeHtml(r.title)}</span>
+      <div class="rock-meta">
+        <select class="rockOwner" data-id="${r.id}">${ownerOptions(r.owner,false)}</select>
+        ${cls==="indiv"?`<select class="rockDept" data-id="${r.id}" title="Function / section">${deptOptions(r.dept||deptOf(r.owner))}</select>`:''}
+        <span class="statusseg">${seg("ontrack","On track","s-ontrack")}${seg("atrisk","At risk","s-atrisk")}${seg("offtrack","Off track","s-offtrack")}</span>
+        <span class="pctwrap"><input type="range" min="0" max="100" value="${r.percent}" class="rockPct" data-id="${r.id}"><span class="pctval">${r.percent}%</span></span>
+        <button class="iconbtn rockDel" data-id="${r.id}">✕</button>
+      </div>
+    </div>
+    <div class="linkrow">${chips}</div>
+    ${dataEdit===r.id?dataEditor(r):""}
+    <div class="timeline"><div class="tl-cells">${Array.from({length:13},(_,i)=>`<div>${(i%6===0||i===12)?('W'+(i+1)):''}</div>`).join("")}</div><div class="tl-fill s-${r.status}" style="width:${r.percent}%"></div><div class="tl-today" style="left:${todayFrac*100}%"></div></div>
+  </div>`;
+}
+function wireRock(scope){
+  scope.querySelectorAll(".statusseg button").forEach(b=>b.onclick=()=>{ curRocks().find(x=>x.id===b.dataset.id).status=b.dataset.s; save(); renderRocksArea(); });
+  scope.querySelectorAll(".rockPct").forEach(s=>{
+    s.oninput=()=>{ const r=curRocks().find(x=>x.id===s.dataset.id); r.percent=+s.value; save(); s.closest(".pctwrap").querySelector(".pctval").textContent=s.value+"%"; s.closest(".rock").querySelector(".tl-fill").style.width=s.value+"%"; };
+    s.onchange=()=>renderReadiness();
+  });
+  scope.querySelectorAll(".rockOwner").forEach(sel=>sel.onchange=()=>{ curRocks().find(x=>x.id===sel.dataset.id).owner=sel.value; save(); renderRocksArea(); });
+  scope.querySelectorAll(".rockDept").forEach(sel=>sel.onchange=()=>{ const r=curRocks().find(x=>x.id===sel.dataset.id); r.dept=sel.value; state.openDepts[sel.value]=true; save(); renderRocksArea(); });
+  scope.querySelectorAll(".rockDel").forEach(b=>b.onclick=()=>{ const rs=curRocks(); const i=rs.findIndex(x=>x.id===b.dataset.id); if(i>=0)rs.splice(i,1); save(); renderRocksArea(); });
+  scope.querySelectorAll(".rockRoll").forEach(b=>b.onclick=()=>rollRock(b.dataset.id));
+  scope.querySelectorAll(".dataLinkBtn").forEach(b=>b.onclick=()=>{ const r=curRocks().find(x=>x.id===b.dataset.id); r.data={source:"qbo",metric:"revenue",mode:"month"}; dataEdit=r.id; save(); renderRocksArea(); });
+  scope.querySelectorAll(".dataEditBtn").forEach(b=>b.onclick=()=>{ dataEdit=(dataEdit===b.dataset.id?null:b.dataset.id); renderRocksArea(); });
+  scope.querySelectorAll(".dataUnlink").forEach(b=>b.onclick=()=>{ const r=curRocks().find(x=>x.id===b.dataset.id); r.data=null; if(dataEdit===b.dataset.id)dataEdit=null; save(); renderRocksArea(); });
+  scope.querySelectorAll(".deSrc").forEach(s=>s.onchange=()=>{ const r=curRocks().find(x=>x.id===s.dataset.id); r.data.source=s.value; const ks=Object.keys(DATA_METRICS[s.value]); if(!ks.includes(r.data.metric)) r.data.metric=ks[0]; save(); renderRocksArea(); });
+  scope.querySelectorAll(".deMetric").forEach(s=>s.onchange=()=>{ const r=curRocks().find(x=>x.id===s.dataset.id); r.data.metric=s.value; save(); renderRocksArea(); });
+  scope.querySelectorAll(".deMode").forEach(s=>s.onchange=()=>{ const r=curRocks().find(x=>x.id===s.dataset.id); r.data.mode=s.value; save(); renderRocksArea(); });
+}
+function renderCorpRocks(){
+  const list=curRocks().filter(r=>r.type==="corporate");
+  $("#corpRocks").innerHTML = list.length ? list.map(r=>rockCard(r,"corp")).join("") : `<p class="blocknote">No corporate rocks for this quarter yet.</p>`;
+  wireRock($("#corpRocks"));
+}
+let indGroupBy = (function(){ try{ return localStorage.getItem('eos-indGroupBy')||'function'; }catch(e){ return 'function'; } })();
+function indGroupKeys(){
+  const rocks=curRocks().filter(r=>r.type==="individual");
+  if(indGroupBy==="person"){ return [...new Set([...state.roster.people.map(p=>p.name), ...rocks.map(r=>r.owner)])].filter(Boolean); }
+  const depts=state.roster.departments.slice();
+  rocks.forEach(r=>{ const d=r.dept||deptOf(r.owner)||"Unassigned"; if(!depts.includes(d)) depts.push(d); });
+  return depts.filter(Boolean);
+}
+function renderIndRocks(){
+  const rocks=curRocks().filter(r=>r.type==="individual");
+  const fnOf=r=> r.dept || deptOf(r.owner) || "Unassigned";
+  const byPerson = indGroupBy==="person";
+  let html="";
+  indGroupKeys().forEach(key=>{
+    const groupRocks = byPerson ? rocks.filter(r=>r.owner===key) : rocks.filter(r=>fnOf(r)===key);
+    const off=groupRocks.filter(r=>r.status==="offtrack").length;
+    const open=!!state.openDepts[key];
+    let body="";
+    if(byPerson){
+      body = groupRocks.length ? groupRocks.map(r=>rockCard(r,"indiv")).join("") : `<div class="empty">No rocks this quarter.</div>`;
+    } else {
+      [...new Set(groupRocks.map(r=>r.owner))].forEach(o=>{
+        const pr=groupRocks.filter(r=>r.owner===o);
+        body+=`<div class="person-sub"><h5>${escapeHtml(o)} · ${pr.length} rock${pr.length!==1?'s':''}</h5>`+pr.map(r=>rockCard(r,"indiv")).join("")+`</div>`;
+      });
+      if(!groupRocks.length) body=`<div class="empty">No rocks in this function yet. Add one below and pick this function.</div>`;
+    }
+    html+=`<div class="dept ${open?'open':''}">
+      <div class="dept-head ${open?'open':''}" data-d="${escapeHtml(key)}"><span class="chev">▶</span><span class="dname">${escapeHtml(key)}</span><span class="dcount ${off?'off':''}">${groupRocks.length} rock${groupRocks.length!==1?'s':''}${off?` · ${off} off track`:''}</span></div>
+      ${open?`<div class="dept-body">${body}</div>`:""}</div>`;
+  });
+  $("#indRocks").innerHTML=html;
+  $("#indRocks").querySelectorAll(".dept-head").forEach(h=>h.onclick=()=>{ const d=h.dataset.d; state.openDepts[d]=!state.openDepts[d]; save(); renderIndRocks(); });
+  wireRock($("#indRocks"));
+}
+function refreshGoalSelects(){
+  const goals=curPlan().annualGoals;
+  const goalOpts=`<option value="">Goal: none</option>`+goals.map(g=>`<option value="${g.id}">${escapeHtml(g.text.length>40?g.text.slice(0,40)+'…':g.text)}</option>`).join("");
+  $("#crGoal").innerHTML=goalOpts; $("#irGoal").innerHTML=goalOpts;
+  const corps=curRocks().filter(r=>r.type==="corporate");
+  $("#irCorp").innerHTML=`<option value="">Corp rock: none</option>`+corps.map(r=>`<option value="${r.id}">${escapeHtml(r.title.length>36?r.title.slice(0,36)+'…':r.title)}</option>`).join("");
+}
+function refreshOwnerSelects(){
+  $("#crOwner").innerHTML=ownerOptions("",true);
+  $("#irOwner").innerHTML=ownerOptions("",false);
+  $("#irDept").innerHTML=`<option value="">Function…</option>`+state.roster.departments.map(d=>`<option>${escapeHtml(d)}</option>`).join("");
+  $("#idsOwner").innerHTML=ownerOptions("",false);
+  $("#todoOwner").innerHTML=ownerOptions("",false);
+  $("#personDept").innerHTML=state.roster.departments.map(d=>`<option>${escapeHtml(d)}</option>`).join("");
+}
+function renderRocksArea(){ renderQuarterNav(); renderGoals(); renderCorpRocks(); renderIndRocks(); refreshGoalSelects(); refreshOwnerSelects(); renderReadiness(); renderIdsSuggest(); }
+
+/* roster + rock adds */
+function addPerson(){
+  const n=$("#personName").value.trim(), d=$("#personDept").value;
+  if(!n){ $("#personName").classList.add("bad"); return; } $("#personName").classList.remove("bad");
+  if(state.roster.people.some(p=>p.name.toLowerCase()===n.toLowerCase())){ toast(`${n} is already on the board`); return; }
+  state.roster.people.push({name:n,dept:d||"Unassigned"}); state.openDepts[d||"Unassigned"]=true;
+  $("#personName").value=""; save(); renderRocksArea(); toast(`Added ${n} to ${d||"Unassigned"}`);
+}
+function addDept(){
+  const d=$("#deptName").value.trim(); if(!d){ $("#deptName").classList.add("bad"); return; } $("#deptName").classList.remove("bad");
+  if(state.roster.departments.includes(d)){ toast(`${d} already exists`); return; }
+  state.roster.departments.push(d); $("#deptName").value=""; save(); renderRocksArea(); toast(`Added department ${d}`);
+}
+function addGoal(){
+  const t=$("#goalText").value.trim(); if(!t){ $("#goalText").classList.add("bad"); return; } $("#goalText").classList.remove("bad");
+  curPlan().annualGoals.push({id:uid(),text:t,target:$("#goalTarget").value.trim(),percent:0});
+  $("#goalText").value="";$("#goalTarget").value=""; save(); renderGoals(); refreshGoalSelects();
+}
+function addCorpRock(){
+  const t=$("#crTitle").value.trim(), o=$("#crOwner").value;
+  let bad=false; if(!t){$("#crTitle").classList.add("bad");bad=true;}else $("#crTitle").classList.remove("bad");
+  if(!o){$("#crOwner").classList.add("bad");bad=true;}else $("#crOwner").classList.remove("bad"); if(bad) return;
+  curRocks().push({id:uid(),title:t,owner:o,type:"corporate",goal:$("#crGoal").value||null,corp:null,status:"ontrack",percent:0});
+  $("#crTitle").value=""; save(); renderRocksArea();
+}
+function addIndRock(){
+  const t=$("#irTitle").value.trim(), o=$("#irOwner").value;
+  let bad=false; if(!t){$("#irTitle").classList.add("bad");bad=true;}else $("#irTitle").classList.remove("bad");
+  if(!o){$("#irOwner").classList.add("bad");bad=true;}else $("#irOwner").classList.remove("bad"); if(bad) return;
+  const dept=$("#irDept").value || deptOf(o) || "Unassigned";
+  curRocks().push({id:uid(),title:t,owner:o,type:"individual",dept:dept,goal:$("#irGoal").value||null,corp:$("#irCorp").value||null,status:"ontrack",percent:0});
+  state.openDepts[dept]=true; $("#irTitle").value=""; save(); renderRocksArea();
+}
+
+/* ===================== READINESS ===================== */
+function renderReadiness(){
+  const incTodos=state.todos.filter(t=>t.status!=="Complete").length;
+  const openIds=state.ids.filter(i=>i.status!=="Resolved").length;
+  const offRocks=curRocks().filter(r=>r.status==="offtrack").length;
+  const fPct=pct(state.sla.forecast.curNum,state.sla.forecast.curDen);
+  $("#readiness").innerHTML=`
+    <div class="rcard ${slaClass(fPct)}"><div class="num">${fPct}%</div><div class="lbl">Forecast on time</div></div>
+    <div class="rcard ${offRocks>0?'bad':'ok'}"><div class="num">${offRocks}</div><div class="lbl">Off-track rocks</div></div>
+    <div class="rcard ${openIds>5?'warn':'ok'}"><div class="num">${openIds}</div><div class="lbl">Open issues</div></div>
+    <div class="rcard ${incTodos>0?'warn':'ok'}"><div class="num">${incTodos}</div><div class="lbl">Open to-dos</div></div>`;
+  $("#nav-head").textContent=state.headlines.length;
+  $("#nav-ids").textContent=openIds; $("#nav-ids").className="cnt"+(openIds>5?" warn":"");
+  $("#nav-todos").textContent=incTodos; $("#nav-todos").className="cnt"+(incTodos>0?" bad":"");
+}
+
+/* ===================== HEADLINES ===================== */
+function renderHeadlines(){
+  const l=$("#headlineList");
+  if(!state.headlines.length){ l.innerHTML=`<p class="blocknote">No headlines yet. Add wins, blockers, or callouts for this week.</p>`; }
+  else l.innerHTML=state.headlines.map(h=>`<div class="headline-item"><span class="dot">›</span><span class="txt">${escapeHtml(h.text)}</span><button class="iconbtn" data-id="${h.id}">✕</button></div>`).join("");
+  l.querySelectorAll(".iconbtn").forEach(b=>b.onclick=()=>{ state.headlines=state.headlines.filter(h=>h.id!==b.dataset.id); save(); renderHeadlines(); renderReadiness(); });
+}
+function addHeadline(){ const v=$("#headlineInput").value.trim(); if(!v) return; state.headlines.push({id:uid(),text:v}); $("#headlineInput").value=""; save(); renderHeadlines(); renderReadiness(); }
+
+/* ===================== IDS ===================== */
+function suggestedIssues(){
+  const out=[];
+  curRocks().filter(r=>r.status==="offtrack").forEach(r=>out.push(`Rock off track: ${r.title}. Identify the blocker.`));
+  curPlan().annualGoals.filter(g=>g.percent<40).forEach(g=>out.push(`Annual goal behind: ${g.text}. Discuss recovery.`));
+  const fPct=pct(state.sla.forecast.curNum,state.sla.forecast.curDen); if(fPct<90) out.push("13-week forecast delivery below 90 percent. Investigate which clients slipped past Tuesday.");
+  const cPct=pct(state.sla.close.curNum,state.sla.close.curDen); if(cPct<90) out.push("Month-end close below 90 percent. Identify clients not closed by business day 5.");
+  const rev=state.revenue, cur=rev.length-1, avg=rev.slice(0,cur).reduce((a,b)=>a+b,0)/cur; if(state.projection<avg) out.push("Projected month revenue below prior-month average. Investigate pipeline leakage.");
+  const have=new Set(state.ids.map(i=>i.title.toLowerCase().trim()));
+  return out.filter(t=>!have.has(t.toLowerCase().trim()));
+}
+function renderIdsSuggest(){
+  const sug=suggestedIssues(), box=$("#idsSuggest");
+  if(!sug.length){ box.innerHTML=""; return; }
+  box.innerHTML=`<div class="banner suggest"><b>${sug.length} suggested issue${sug.length>1?'s':''} from the scorecard and rocks.</b>
+    ${sug.map((t,i)=>`<button class="btn sm" data-i="${i}">+ ${escapeHtml(t.length>54?t.slice(0,54)+'…':t)}</button>`).join(" ")}
+    <button class="ghostbtn" id="addAllSug">Add all</button></div>`;
+  box.querySelectorAll("button[data-i]").forEach(b=>b.onclick=()=>addIds(sug[+b.dataset.i],"Steve","High",true));
+  const all=document.getElementById("addAllSug"); if(all) all.onclick=()=>sug.forEach(t=>addIds(t,"Steve","High",true));
+}
+function addIds(title,owner,priority,auto){
+  title=(title||"").trim(); const ownerVal=owner||$("#idsOwner").value;
+  if(!auto){
+    let bad=false; if(!title){ $("#idsTitle").classList.add("bad"); bad=true; } if(!ownerVal){ $("#idsOwner").classList.add("bad"); bad=true; }
+    if(bad){ flagDup("Issues need a title and an owner."); return; }
+    if(state.ids.some(i=>i.title.toLowerCase().trim()===title.toLowerCase())){ flagDup(`"${escapeHtml(title)}" is already on the list. Add it again anyway?`, ()=>commitIds(title,ownerVal,priority,auto)); return; }
+  } else if(state.ids.some(i=>i.title.toLowerCase().trim()===title.toLowerCase())) return;
+  commitIds(title,ownerVal,priority,auto);
+}
+function commitIds(title,owner,priority,auto){
+  state.ids.push({id:uid(),title,owner,status:"Open",priority:priority||"Medium",auto:!!auto});
+  $("#idsTitle").value=""; $("#idsTitle").classList.remove("bad"); $("#idsOwner").classList.remove("bad"); $("#idsDup").innerHTML="";
+  save(); renderIds(); renderIdsSuggest(); renderReadiness();
+}
+function flagDup(msg,onConfirm){
+  $("#idsDup").innerHTML=`<div class="banner flag"><b>${msg}</b>${onConfirm?` <button class="btn sm" id="dupYes">Add anyway</button> <button class="ghostbtn" id="dupNo">Cancel</button>`:''}</div>`;
+  if(onConfirm){ document.getElementById("dupYes").onclick=onConfirm; document.getElementById("dupNo").onclick=()=>{$("#idsDup").innerHTML="";}; }
+}
+function renderIds(){
+  const list=$("#idsList"); let items=state.ids; if(state.hideResolved) items=items.filter(i=>i.status!=="Resolved");
+  if(!items.length){ list.innerHTML=`<p class="blocknote">No issues. Off-track rocks, goals, and SLAs surface suggestions above.</p>`; return; }
+  list.innerHTML=items.map(i=>`
+    <div class="list-row p-${i.priority.toLowerCase()} ${i.status==='Resolved'?'resolved':''}" draggable="true" data-id="${i.id}">
+      <span class="grip">⠿</span>
+      <span class="lr-main">${escapeHtml(i.title)} ${i.auto?'<span class="tag auto">auto</span>':''}<span class="lr-sub">Owner: ${escapeHtml(i.owner)}</span></span>
+      <select class="idsPrio" data-id="${i.id}">${["High","Medium","Low"].map(p=>`<option ${p===i.priority?'selected':''}>${p}</option>`).join("")}</select>
+      <select class="idsStat" data-id="${i.id}">${["Open","In Progress","Resolved"].map(s=>`<option ${s===i.status?'selected':''}>${s}</option>`).join("")}</select>
+      <button class="iconbtn idsDel" data-id="${i.id}">✕</button>
+    </div>`).join("");
+  list.querySelectorAll(".idsPrio").forEach(s=>s.onchange=()=>{ state.ids.find(x=>x.id===s.dataset.id).priority=s.value; save(); renderIds(); });
+  list.querySelectorAll(".idsStat").forEach(s=>s.onchange=()=>{ state.ids.find(x=>x.id===s.dataset.id).status=s.value; save(); renderIds(); renderReadiness(); });
+  list.querySelectorAll(".idsDel").forEach(b=>b.onclick=()=>{ state.ids=state.ids.filter(x=>x.id!==b.dataset.id); save(); renderIds(); renderIdsSuggest(); renderReadiness(); });
+  enableDrag(list,"ids");
+}
+function enableDrag(container,key){
+  container.querySelectorAll("[draggable=true]").forEach(row=>{
+    row.addEventListener("dragstart",()=>row.classList.add("dragging"));
+    row.addEventListener("dragend",()=>row.classList.remove("dragging"));
+    row.addEventListener("dragover",e=>{ e.preventDefault(); const after=[...container.querySelectorAll("[draggable=true]:not(.dragging)")].find(r=>{ const b=r.getBoundingClientRect(); return e.clientY<b.top+b.height/2; }); const dr=container.querySelector(".dragging"); if(after) container.insertBefore(dr,after); else container.appendChild(dr); });
+    row.addEventListener("drop",()=>{ const order=[...container.querySelectorAll("[draggable=true]")].map(r=>r.dataset.id); state[key].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id)); save(); });
+  });
+}
+
+/* ===================== TO-DOS ===================== */
+function renderTodoFlag(){
+  const inc=state.todos.filter(t=>t.status!=="Complete"), overdue=inc.filter(t=>daysOverdue(t.due)>0);
+  if(!inc.length){ $("#todoFlag").innerHTML=`<div class="banner suggest"><b>All commitments closed.</b> Clean week.</div>`; return; }
+  $("#todoFlag").innerHTML=`<div class="banner ${overdue.length?'flag':'suggest'}"><b>${inc.length} commitment${inc.length>1?'s':''} still open${overdue.length?`, ${overdue.length} overdue`:''}.</b> Flagged for discussion.</div>`;
+}
+function renderTodos(){
+  const list=$("#todoList");
+  if(!state.todos.length){ list.innerHTML=`<p class="blocknote">No commitments carried forward.</p>`; renderTodoFlag(); return; }
+  list.innerHTML=state.todos.map(t=>{
+    const od=daysOverdue(t.due), late=od>0 && t.status!=="Complete";
+    return `<div class="list-row ${t.status==='Complete'?'complete':''}" data-id="${t.id}">
+      <span class="lr-main">${escapeHtml(t.desc)}<span class="lr-sub">Owner: ${escapeHtml(t.owner)} · Due ${t.due||'unset'}</span></span>
+      ${late?`<span class="tag overdue">${od}d late</span>`:`<span class="due-ok">${t.status==='Complete'?'done':''}</span>`}
+      <select class="todoStat" data-id="${t.id}">${["Not Started","In Progress","Complete"].map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join("")}</select>
+      <button class="iconbtn todoDel" data-id="${t.id}">✕</button>
+    </div>`;
+  }).join("");
+  list.querySelectorAll(".todoStat").forEach(s=>s.onchange=()=>{ state.todos.find(x=>x.id===s.dataset.id).status=s.value; save(); renderTodos(); renderReadiness(); });
+  list.querySelectorAll(".todoDel").forEach(b=>b.onclick=()=>{ state.todos=state.todos.filter(x=>x.id!==b.dataset.id); save(); renderTodos(); renderReadiness(); });
+  renderTodoFlag();
+}
+function addTodo(){
+  const desc=$("#todoDesc").value.trim(), owner=$("#todoOwner").value, due=$("#todoDue").value;
+  let bad=false;
+  if(!desc){ $("#todoDesc").classList.add("bad"); bad=true; } else $("#todoDesc").classList.remove("bad");
+  if(!owner){ $("#todoOwner").classList.add("bad"); bad=true; } else $("#todoOwner").classList.remove("bad");
+  if(!due){ $("#todoDue").classList.add("bad"); bad=true; } else $("#todoDue").classList.remove("bad");
+  if(bad){ $("#todoFlag").innerHTML=`<div class="banner flag"><b>Every to-do needs an owner and a due date.</b></div>`; return; }
+  state.todos.push({id:uid(),owner,desc,due,status:"Not Started"});
+  $("#todoDesc").value=""; $("#todoDue").value=""; save(); renderTodos(); renderReadiness();
+}
+
+/* ===================== RATING ===================== */
+function teamAvg(){
+  const r=state.raters||[];
+  const vals=r.map(n=>state.ratings[n]).filter(v=>v>0);
+  return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*10)/10 : 0;
+}
+function renderRating(){
+  if(!state.ratings) state.ratings={};
+  if(!state.ratingHistory) state.ratingHistory=[];
+  if(!state.raters) state.raters = peopleNames().slice();
+  const raters=state.raters;
+  const submitted=raters.filter(n=>state.ratings[n]>0).length;
+  const avg=teamAvg();
+  const rows=raters.map((p,i)=>{
+    const v=state.ratings[p]||0;
+    const btns=[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="rbtn ${v===n?'on':''}" data-i="${i}" data-n="${n}">${n}</button>`).join("");
+    return `<div class="rrow"><input class="rnameinput" data-i="${i}" value="${escapeHtml(p)}"><span class="rbtns">${btns}</span><button class="iconbtn raterDel" data-i="${i}" title="Remove">✕</button></div>`;
+  }).join("");
+  const hist=state.ratingHistory.slice(-10);
+  const histHtml = hist.length ? `<div class="rhist"><div class="rhist-title">Past meetings (team average)</div>`+
+    hist.map(h=>`<span class="rchip">${h.weekOf}: <b>${h.avg}</b></span>`).join("")+`</div>` : "";
+  $("#ratingArea").innerHTML=`
+    <div class="ravg"><div class="ravg-num">${avg||"—"}</div><div class="ravg-lbl">team average · ${submitted} of ${raters.length} rated this week</div></div>
+    <div class="rrows">${rows}</div>
+    <div class="additem" style="margin-top:8px;"><input type="text" id="raterAdd" placeholder="Add a name" style="width:180px;"><button class="btn sm" id="raterAddBtn">Add name</button></div>
+    ${histHtml}
+    <div style="margin-top:14px;"><button class="btn cta" id="newWeekBtn">Log scores and start new week</button></div>`;
+  $("#ratingArea").querySelectorAll(".rbtn").forEach(b=>b.onclick=()=>{ const name=state.raters[+b.dataset.i]; state.ratings[name]=+b.dataset.n; save(); renderRating(); });
+  $("#ratingArea").querySelectorAll(".rnameinput").forEach(inp=>inp.onchange=()=>{
+    const i=+inp.dataset.i, old=state.raters[i], nw=inp.value.trim();
+    if(!nw){ inp.value=old; return; }
+    if(state.raters.some((x,j)=>j!==i && x.toLowerCase()===nw.toLowerCase())){ toast("That name is already on the list"); inp.value=old; return; }
+    state.raters[i]=nw;
+    if(old in state.ratings){ state.ratings[nw]=state.ratings[old]; delete state.ratings[old]; }
+    save(); renderRating();
+  });
+  $("#ratingArea").querySelectorAll(".raterDel").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, name=state.raters[i]; state.raters.splice(i,1); delete state.ratings[name]; save(); renderRating(); });
+  const addRater=()=>{ const v=$("#raterAdd").value.trim(); if(!v) return; if(state.raters.some(x=>x.toLowerCase()===v.toLowerCase())){ toast("That name is already on the list"); return; } state.raters.push(v); $("#raterAdd").value=""; save(); renderRating(); };
+  $("#raterAddBtn").onclick=addRater;
+  $("#raterAdd").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addRater(); } });
+  $("#newWeekBtn").onclick=startNewWeek;
+}
+function startNewWeek(){
+  const avg=teamAvg(), submitted=Object.keys(state.ratings||{}).filter(k=>state.ratings[k]>0).length;
+  const doneTodos=state.todos.filter(t=>t.status==="Complete").length;
+  if(!confirm(`Start a new week?\n\n• Logs the team rating (${avg||'no scores yet'}) to history\n• Clears ${doneTodos} completed to-do${doneTodos!==1?'s':''} and all headlines\n• Resets everyone's rating\n\nOpen issues, incomplete to-dos, goals, and rocks all carry forward.`)) return;
+  const weekOf=new Date().toISOString().slice(0,10);
+  if(submitted) state.ratingHistory.push({weekOf, avg, scores:{...state.ratings}});
+  state.ratings={};
+  state.todos=state.todos.filter(t=>t.status!=="Complete");
+  state.headlines=[];
+  save(); renderAll(); toast(submitted?`Logged ${avg}, started new week`:"New week started");
+}
+function clearCompletedTodos(){
+  const done=state.todos.filter(t=>t.status==="Complete").length;
+  if(!done){ toast("No completed to-dos to clear"); return; }
+  if(!confirm(`Clear ${done} completed to-do${done>1?'s':''}? Incomplete ones stay and carry forward.`)) return;
+  state.todos=state.todos.filter(t=>t.status!=="Complete"); save(); renderTodos(); renderReadiness(); toast(`Cleared ${done} completed`);
+}
+
+/* ===================== INIT ===================== */
+/* ===================== STICKY QUICK-CREATE (rock / goal) ===================== */
+let quickMode = null, quickRockType = "individual";
+function onEnterEl(el,fn){ if(el) el.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); fn(); } }); }
+function openQuick(mode){ quickMode = (quickMode===mode ? null : mode); renderQuickCreate(); }
+function renderQuickCreate(){
+  const el=$("#quickCreate"); if(!el) return;
+  const rb=document.getElementById("quickRockBtn"), gb=document.getElementById("quickGoalBtn");
+  if(rb) rb.classList.toggle("on", quickMode==="rock");
+  if(gb) gb.classList.toggle("on", quickMode==="goal");
+  if(!quickMode){ el.style.display="none"; el.innerHTML=""; return; }
+  el.style.display="block";
+  const v=state.view;
+  if(quickMode==="goal"){
+    el.innerHTML=`<div class="qc-inner">
+      <span class="qc-title">New annual goal · ${v.year}<button class="iconbtn" id="qcClose">✕</button></span>
+      <input type="text" id="qcGoalText" placeholder="Goal, e.g. reach $10M revenue" style="flex:1;min-width:240px;">
+      <input type="text" id="qcGoalTarget" placeholder="Target / metric" style="width:150px;">
+      <select id="qcGoalOwner" title="Owner">${ownerOptions('',false)}</select>
+      <button class="btn sm" id="qcGoalAdd">Create goal</button>
+    </div>`;
+    const add=()=>{ const t=$("#qcGoalText").value.trim(); if(!t){ $("#qcGoalText").classList.add("bad"); return; } curPlan().annualGoals.push({id:uid(),text:t,target:$("#qcGoalTarget").value.trim(),percent:0,owner:$("#qcGoalOwner").value,notes:""}); save(); quickMode=null; renderQuickCreate(); renderRocksArea(); toast(`Goal added to ${v.year}`); };
+    $("#qcGoalAdd").onclick=add; onEnterEl($("#qcGoalText"),add); onEnterEl($("#qcGoalTarget"),add);
+    $("#qcClose").onclick=()=>{ quickMode=null; renderQuickCreate(); };
+  } else {
+    const type=quickRockType;
+    const goalOpts=`<option value="">Link to goal: none</option>`+curPlan().annualGoals.map(g=>`<option value="${g.id}">${escapeHtml(g.text.length>40?g.text.slice(0,40)+'…':g.text)}</option>`).join("");
+    const corpOpts=`<option value="">Link to corp rock: none</option>`+curRocks().filter(r=>r.type==="corporate").map(r=>`<option value="${r.id}">${escapeHtml(r.title.length>36?r.title.slice(0,36)+'…':r.title)}</option>`).join("");
+    el.innerHTML=`<div class="qc-inner">
+      <span class="qc-title">New rock · ${v.quarter} ${v.year}<button class="iconbtn" id="qcClose">✕</button></span>
+      <span class="qc-seg"><button class="${type==='corporate'?'on':''}" data-t="corporate">Corporate</button><button class="${type==='individual'?'on':''}" data-t="individual">Individual</button></span>
+      <input type="text" id="qcRockTitle" placeholder="Rock title" style="flex:1;min-width:200px;">
+      <select id="qcRockOwner" title="Owner">${ownerOptions('',false)}</select>
+      ${type==='individual'?`<select id="qcRockDept" title="Function / section"><option value="">Function…</option>${state.roster.departments.map(d=>`<option>${escapeHtml(d)}</option>`).join("")}</select>`:''}
+      <select id="qcRockGoal" title="Annual goal">${goalOpts}</select>
+      ${type==='individual'?`<select id="qcRockCorp" title="Corporate rock">${corpOpts}</select>`:''}
+      <button class="btn sm" id="qcRockAdd">Create rock</button>
+    </div>`;
+    el.querySelectorAll(".qc-seg button").forEach(b=>b.onclick=()=>{ quickRockType=b.dataset.t; renderQuickCreate(); });
+    const add=()=>{
+      const t=$("#qcRockTitle").value.trim(), o=$("#qcRockOwner").value;
+      let bad=false; if(!t){ $("#qcRockTitle").classList.add("bad"); bad=true; } if(!o){ $("#qcRockOwner").classList.add("bad"); bad=true; } if(bad) return;
+      if(type==="corporate"){
+        curRocks().push({id:uid(),title:t,owner:o,type:"corporate",goal:$("#qcRockGoal").value||null,corp:null,status:"ontrack",percent:0});
+      } else {
+        const dept=$("#qcRockDept").value || deptOf(o) || "Unassigned";
+        curRocks().push({id:uid(),title:t,owner:o,type:"individual",dept:dept,goal:$("#qcRockGoal").value||null,corp:(($("#qcRockCorp")||{}).value)||null,status:"ontrack",percent:0});
+        state.openDepts[dept]=true;
+      }
+      save(); quickMode=null; renderQuickCreate(); renderRocksArea(); toast(`${type==='corporate'?'Corporate':'Individual'} rock added to ${v.quarter} ${v.year}`);
+    };
+    $("#qcRockAdd").onclick=add; onEnterEl($("#qcRockTitle"),add);
+    $("#qcClose").onclick=()=>{ quickMode=null; renderQuickCreate(); };
+  }
+}
+/* =================================================================
+   BANNERS. Persistent, in-flow, never a popup.
+   ================================================================= */
+var _banners=[];
+function banner(kind,html,actionLabel,actionFn){
+  _banners.push({kind:kind,html:html,actionLabel:actionLabel,actionFn:actionFn});
+  renderBanners();
+}
+function renderBanners(){
+  var host=$("#banners"); if(!host) return;
+  host.innerHTML=_banners.map(function(b,i){
+    return '<div class="banner '+b.kind+'">'+b.html+'<span class="bspacer"></span>'+
+      (b.actionLabel?'<button class="btn sm" data-bi="'+i+'">'+escapeHtml(b.actionLabel)+'</button>':'')+
+      '<button class="vdel" data-bx="'+i+'" title="Dismiss">&times;</button></div>';
+  }).join("");
+  host.querySelectorAll("[data-bi]").forEach(function(btn){
+    btn.onclick=function(){ var b=_banners[+btn.dataset.bi]; if(b && b.actionFn) b.actionFn(); };
+  });
+  host.querySelectorAll("[data-bx]").forEach(function(btn){
+    btn.onclick=function(){ _banners.splice(+btn.dataset.bx,1); renderBanners(); };
+  });
+}
+function storageBanner(){
+  if(_bannerShown) return; _bannerShown=true;
+  banner("bad","<b>This browser is not saving your changes.</b> Export now, or your work will be "+
+    "lost when you close this tab.","Export now",exportBackup);
+}
+function eosHostSentinel(){
+  if(CAPS.mode==="client" && location.protocol==="https:" && !CAPS.knownHost){
+    banner("warn","<b>Standalone mode on an unrecognized host.</b> Shared state and the automatic "+
+      "feed are off. Your data stays in this browser only.");
+  }
+}
+
+/* =================================================================
+   SETUP. Wizard on first run, editor on every visit after.
+   ================================================================= */
+var SEAT_CHIPS=["Visionary","Integrator","Sales & Marketing","Operations","Finance"];
+var SCORECARD_PRESETS=[
+  {label:"Revenue",unit:"currency",direction:"higher"},
+  {label:"Gross Margin %",unit:"percent",direction:"higher"},
+  {label:"MRR",unit:"currency",direction:"higher"},
+  {label:"New MRR",unit:"currency",direction:"higher"},
+  {label:"Churn %",unit:"percent",direction:"lower"},
+  {label:"Utilization %",unit:"percent",direction:"higher"},
+  {label:"Cash",unit:"currency",direction:"higher"},
+  {label:"AR over 60 days",unit:"currency",direction:"lower"},
+  {label:"SLA attainment %",unit:"percent",direction:"higher"},
+  {label:"CSAT",unit:"number",direction:"higher"},
+  {label:"Pipeline created",unit:"currency",direction:"higher"},
+  {label:"Close rate %",unit:"percent",direction:"higher"}
+];
+var MONTH_NAMES=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function setupDone(){ return !!(state.config && state.config.setupComplete); }
+
+function renderSetup(){
+  var host=$("#setup"); if(!host) return;
+  var first=!setupDone();
+  var c=state.config, co=state.company;
+  var people=(co.people||[]).slice().sort(function(a,b){ return a.order-b.order; });
+  var h='';
+  h+='<div class="sec-head"><span class="sec-num">00</span><h2>'+(first?'Set up your dashboard':'Setup')+'</h2>'+
+     '<span class="hint">'+(first?'About four minutes. Sets up your scorecard, priorities, and vision plan.':'Edit any of this at any time.')+'</span></div>';
+  h+='<div class="setupwrap">';
+
+  h+='<div class="setupstep"><h4><span class="sn">1</span> Company <span class="req">Required</span></h4>'+
+     '<p class="shint">Used in the page title, printouts, and backup filenames.</p>'+
+     '<input type="text" id="suCompany" placeholder="Your company name" value="'+escapeHtml(co.name||"")+'" style="max-width:340px;"></div>';
+
+  h+='<div class="setupstep"><h4><span class="sn">2</span> Fiscal year</h4>'+
+     '<p class="shint">Drives quarter labels. Leave on January if your year matches the calendar.</p>'+
+     '<select id="suFy">'+MONTH_NAMES.map(function(m,i){
+        return '<option value="'+(i+1)+'"'+((c.fyStartMonth||1)===i+1?' selected':'')+'>Starts '+m+'</option>';
+     }).join("")+'</select></div>';
+
+  h+='<div class="setupstep"><h4><span class="sn">3</span> Leadership team <span class="req">Required</span></h4>'+
+     '<p class="shint">Everyone who sits in the weekly meeting. These become the owners you can assign work to.</p>'+
+     '<div id="suPeople">';
+  if(!people.length) h+='<div class="empty">No one added yet. Add your first team member below.</div>';
+  people.forEach(function(p){
+    h+='<div class="personrow" data-pid="'+p.id+'">'+
+       '<input type="text" class="suPName" data-pid="'+p.id+'" placeholder="Name" value="'+escapeHtml(p.name||"")+'">'+
+       '<input type="text" class="suPSeat" data-pid="'+p.id+'" placeholder="Seat or title" value="'+escapeHtml(p.seat||"")+'">'+
+       '<button class="vdel" data-pdel="'+p.id+'" title="Remove">&times;</button></div>';
+  });
+  h+='</div>';
+  h+='<div class="vaddrow"><input type="text" id="suNewName" placeholder="Name" style="width:150px;">'+
+     '<input type="text" id="suNewSeat" placeholder="Seat or title" style="width:180px;">'+
+     '<button class="btn sm" id="suAddPerson">Add person</button></div>';
+  h+='<div class="seatchips">'+SEAT_CHIPS.map(function(s){
+       return '<span class="seatchip" data-seat="'+escapeHtml(s)+'">'+escapeHtml(s)+'</span>'; }).join("")+
+     '</div>';
+  h+='<div class="vaddrow"><textarea id="suBulk" class="vtostmt" style="min-height:52px;" '+
+     'placeholder="Or paste your team, one per line. &quot;Name, Seat&quot; also works."></textarea>'+
+     '<button class="ghostbtn" id="suBulkAdd">Add all</button></div>';
+  h+='</div>';
+
+  h+='<div class="setupstep"><h4><span class="sn">4</span> Scorecard measures</h4>'+
+     '<p class="shint">Pick the handful you review weekly. You can add your own later. Skip this if you are not sure yet.</p>'+
+     '<div class="scorepick">'+SCORECARD_PRESETS.map(function(p,i){
+        var on=(state.scorecard.rows||[]).some(function(r){ return r.label===p.label; });
+        return '<label><input type="checkbox" class="suSc" data-i="'+i+'"'+(on?' checked':'')+'> '+escapeHtml(p.label)+'</label>';
+     }).join("")+'</div></div>';
+
+  h+='<div class="setupstep"><h4><span class="sn">5</span> Meeting cadence</h4>'+
+     '<p class="shint">When your leadership meeting runs. Drives the meeting timer.</p>'+
+     '<div class="vaddrow">'+
+     '<select id="suDay">'+["Mon","Tue","Wed","Thu","Fri"].map(function(d){
+        return '<option'+(((c.meeting||{}).day||"Mon")===d?' selected':'')+'>'+d+'</option>'; }).join("")+'</select>'+
+     '<input type="time" id="suTime" value="'+escapeHtml((c.meeting||{}).time||"09:00")+'">'+
+     '<input type="number" id="suDur" min="30" max="240" step="15" value="'+(((c.meeting||{}).durationMin)||90)+'" style="width:90px;" title="Minutes"> '+
+     '<span style="font-size:11.5px;color:var(--text-dim);">minutes</span></div></div>';
+
+  /* Step 6: where the data file lives */
+  var fEnabled=!!c.folderEnabled, fName=c.folderName||"", fState=c.folderState||_fsState;
+  h+='<div class="setupstep"><h4><span class="sn">6</span> Where your data is saved</h4>'+
+     '<p class="shint">Your work is always saved in this browser first, so the dashboard keeps '+
+     'working offline. You can also keep the data file in a folder you choose, which means it '+
+     'survives a cleared cache or a new laptop.</p>';
+  if(FS_OK){
+    if(fEnabled && fName){
+      var badge = fState==="connected" ? '<span style="color:var(--green);">&#10003; saving to this folder</span>'
+                : fState==="needs-permission" ? '<span style="color:var(--amber);">needs permission after each restart</span>'
+                : fState==="error" ? '<span style="color:var(--red);">last write failed</span>'
+                : '<span style="color:var(--text-dim);">connected</span>';
+      h+='<div class="banner info" style="margin:0 0 10px;"><div><b>'+escapeHtml(fName)+'</b><br>'+
+         '<span style="font-size:11.5px;">File: <code>'+escapeHtml(dataFileName())+'</code> &middot; '+badge+'</span></div>'+
+         '<span class="bspacer"></span>'+
+         '<button class="ghostbtn" id="suFolderChange">Change folder</button>'+
+         '<button class="ghostbtn" id="suFolderOff">Stop using it</button></div>';
+    } else {
+      h+='<div class="vaddrow" style="margin-bottom:8px;">'+
+         '<button class="btn sm" id="suFolderPick">Choose a folder</button>'+
+         '<span style="font-size:11.5px;color:var(--text-dim);">Optional. You can set this later.</span></div>';
+    }
+    h+='<p class="shint" style="margin-bottom:0;"><b>Tip:</b> pick a folder your OneDrive, SharePoint, '+
+       'Dropbox, or Google Drive already syncs. Your own cloud then keeps an offsite copy and your team '+
+       'can see the file. Note this is for keeping and backing up the data, not for editing at the same '+
+       'time: if two people save over each other, your sync tool makes conflict copies rather than '+
+       'merging. Use <b>Publish board</b> and <b>Absorb updates</b> to move updates between people.</p>';
+  } else {
+    h+='<div class="banner warn" style="margin:0 0 10px;"><div>'+
+       '<b>This browser cannot pick a folder.</b> Choosing a folder needs Chrome or Edge on the hosted '+
+       'page. Safari and Firefox do not support it, and neither does a copy opened straight from disk.'+
+       '</div></div>';
+  }
+  h+='<p class="shint" style="margin-top:10px;margin-bottom:0;"><b>Works in every browser:</b> the '+
+     'backup file is always named <code>'+escapeHtml(dataFileName())+'</code>. Point your browser\'s '+
+     'download folder at the folder you want (in Chrome and Edge: Settings, Downloads, Location; in '+
+     'Safari: Settings, General, File download location) and every backup lands there automatically.</p>';
+  h+='</div>';
+
+  h+='<div class="vaddrow" style="margin-top:16px;align-items:center;">'+
+     '<button class="btn" id="suFinish">'+(first?'Finish setup':'Save changes')+'</button>'+
+     (first?'':'<button class="ghostbtn" id="suBackToBoard">Back to the board</button>')+
+     '<span id="suMsg" style="font-size:11.5px;color:var(--text-dim);"></span></div>';
+  h+='</div>';
+  host.innerHTML=h;
+  wireSetup(first);
+}
+
+/* Read whatever is currently in the setup fields into state. Called before any
+   re-render so a value typed but not yet committed is never discarded. */
+function commitSetupFields(){
+  var e;
+  e=$("#suCompany"); if(e) state.company.name=e.value;
+  e=$("#suFy");      if(e) state.config.fyStartMonth=+e.value||1;
+  if($("#suDay")) state.config.meeting={ day:$("#suDay").value,
+    time:($("#suTime")||{}).value||"09:00", durationMin:+(($("#suDur")||{}).value)||90 };
+  document.querySelectorAll(".suPName,.suPSeat").forEach(function(inp){
+    var p=(state.company.people||[]).find(function(x){ return x.id===inp.dataset.pid; }); if(!p) return;
+    if(inp.classList.contains("suPName")) p.name=inp.value; else p.seat=inp.value;
+  });
+  syncRosterFromCompany();
+}
+function wireSetup(first){
+  var el;
+  el=$("#suAddPerson"); if(el) el.onclick=function(){
+    var n=$("#suNewName").value.trim(); if(!n){ toast("Enter a name first"); return; }
+    commitSetupFields();
+    addSetupPerson(n,$("#suNewSeat").value.trim());
+    renderSetup(); var f=$("#suNewName"); if(f) f.focus();
+  };
+  ["suNewName","suNewSeat"].forEach(function(id){
+    var e2=$("#"+id); if(e2) e2.addEventListener("keydown",function(ev){
+      if(ev.key==="Enter"){ ev.preventDefault(); $("#suAddPerson").click(); } });
+  });
+  document.querySelectorAll(".seatchip").forEach(function(ch){
+    ch.onclick=function(){ var t=$("#suNewSeat"); if(t){ t.value=ch.dataset.seat; t.focus(); } };
+  });
+  el=$("#suBulkAdd"); if(el) el.onclick=function(){
+    commitSetupFields();
+    var raw=($("#suBulk").value||"").split(/\r?\n/), n=0;
+    raw.forEach(function(line){
+      line=line.trim(); if(!line) return;
+      var parts=line.split(","), nm=parts[0].trim(), st=parts.slice(1).join(",").trim();
+      if(nm){ addSetupPerson(nm,st); n++; }
+    });
+    if(n){ toast("Added "+n+" "+(n===1?"person":"people")); renderSetup(); } else toast("Nothing to add");
+  };
+  document.querySelectorAll("[data-pdel]").forEach(function(b){
+    b.onclick=function(){
+      commitSetupFields();
+      state.company.people=state.company.people.filter(function(p){ return p.id!==b.dataset.pdel; });
+      syncRosterFromCompany(); save(); renderSetup(); refreshOwnerSelects();
+    };
+  });
+  document.querySelectorAll(".suPName,.suPSeat").forEach(function(inp){
+    inp.oninput=function(){
+      var p=state.company.people.find(function(x){ return x.id===inp.dataset.pid; }); if(!p) return;
+      if(inp.classList.contains("suPName")) p.name=inp.value; else p.seat=inp.value;
+      syncRosterFromCompany(); save(); refreshOwnerSelects(); renderBrand();
+    };
+  });
+  el=$("#suCompany"); if(el) el.oninput=function(){
+    state.company.name=el.value; save(); renderBrand();
+  };
+  el=$("#suFy"); if(el) el.onchange=function(){ state.config.fyStartMonth=+el.value; save(); };
+  ["suDay","suTime","suDur"].forEach(function(id){
+    var e3=$("#"+id); if(e3) e3.onchange=function(){
+      state.config.meeting={ day:$("#suDay").value, time:$("#suTime").value, durationMin:+$("#suDur").value };
+      save(); renderTimer();
+    };
+  });
+  document.querySelectorAll(".suSc").forEach(function(cb){
+    cb.onchange=function(){
+      var p=SCORECARD_PRESETS[+cb.dataset.i];
+      state.scorecard.rows=state.scorecard.rows||[];
+      if(cb.checked){
+        if(!state.scorecard.rows.some(function(r){ return r.label===p.label; }))
+          state.scorecard.rows.push({id:uid(),label:p.label,unit:p.unit,direction:p.direction,goal:null,ownerId:null});
+      } else {
+        state.scorecard.rows=state.scorecard.rows.filter(function(r){ return r.label!==p.label; });
+      }
+      save();
+    };
+  });
+  el=$("#suFolderPick");   if(el) el.onclick=function(){ commitSetupFields(); pickDataFolder(); };
+  el=$("#suFolderChange"); if(el) el.onclick=function(){ commitSetupFields(); pickDataFolder(); };
+  el=$("#suFolderOff");    if(el) el.onclick=function(){
+    if(confirm("Stop saving to "+(state.config.folderName||"that folder")+"?\n\nYour work stays in this "+
+       "browser, and the file already in the folder is left alone.")) disconnectDataFolder();
+  };
+  el=$("#suFinish"); if(el) el.onclick=finishSetup;
+  el=$("#suBackToBoard"); if(el) el.onclick=function(){ location.hash="#vision"; };
+}
+function addSetupPerson(name,seat){
+  state.company.people=state.company.people||[];
+  var canon=SEAT_CHIPS.indexOf(seat)!==-1 ? seat.toLowerCase().replace(/[^a-z]/g,"") : null;
+  state.company.people.push({ id:uid(), name:name, seat:seat||"", seatCanonical:canon,
+                              order:state.company.people.length });
+  syncRosterFromCompany(); save();
+}
+/* company.people is the source of truth; roster mirrors it for the existing Rocks code. */
+function syncRosterFromCompany(){
+  state.roster=state.roster||{people:[],departments:[]};
+  state.roster.people=(state.company.people||[]).map(function(p){
+    return { name:p.name, dept:p.seat||"Leadership" };
+  });
+  var ds=[]; state.roster.people.forEach(function(p){ if(p.dept && ds.indexOf(p.dept)===-1) ds.push(p.dept); });
+  state.roster.departments=ds.length?ds:["Leadership"];
+  state.raters=state.roster.people.map(function(p){ return p.name; });
+}
+function finishSetup(){
+  commitSetupFields();
+  var nm=(state.company.name||"").trim();
+  var np=(state.company.people||[]).filter(function(p){ return (p.name||"").trim(); }).length;
+  if(!nm){ $("#suMsg").textContent="Add your company name to finish."; $("#suCompany").focus(); return; }
+  if(!np){ $("#suMsg").textContent="Add at least one team member to finish."; $("#suNewName").focus(); return; }
+  state.config.setupComplete=true;
+  state.config.setupAt=state.config.setupAt||new Date().toISOString();
+  syncRosterFromCompany(); save();
+  renderAll(); applyGate();
+  toast("Setup complete. Your board is ready.");
+  location.hash="#vision";
+}
+/* The storage sentence must describe what is actually true right now, so it
+   changes when a data folder is in use. Claiming "browser only" while writing
+   to a folder, or the reverse, would be the kind of quiet inaccuracy that
+   costs someone their data. */
+function renderStorageNote(){
+  var n=$("#storageNote"); if(!n) return;
+  var c=state.config||{};
+  if(CAPS.mode==="internal"){
+    n.innerHTML="Board state syncs to the shared team store. Your browser keeps a local copy.";
+    return;
+  }
+  if(c.folderEnabled && c.folderName){
+    n.innerHTML="Your data is saved in this browser and written to <b>"+escapeHtml(c.folderName)+
+      "</b> as <code>"+escapeHtml(dataFileName())+"</code>. Nothing is sent to us. "+
+      "If that folder is synced by OneDrive, SharePoint, Dropbox, or Google Drive, your own "+
+      "cloud keeps the offsite copy.";
+  } else {
+    n.innerHTML="Your data is stored in this browser on this device only. It is never sent "+
+      "anywhere. We cannot recover it. Back it up, or set a data folder in "+
+      '<a href="#setup" style="color:var(--steel);">Setup</a>.';
+  }
+}
+function renderBrand(){
+  var nm=(state.company.name||"").trim();
+  var b=$("#brandmark");
+  if(b) b.innerHTML= nm ? escapeHtml(nm)+' <span>EOS</span>' : 'EOS <span>Dashboard</span>';
+  document.title = nm ? nm+" · EOS Dashboard" : "EOS Dashboard";
+  var m=$("#modeStamp");
+  if(m) m.textContent = CAPS.mode==="internal" ? "connected mode" : "standalone mode";
+}
+/* Before setup completes, the board sections are hidden and nav is disabled. */
+function applyGate(){
+  var done=setupDone();
+  ["vision","scorecard","rocks","headlines","ids","todos","rating"].forEach(function(id){
+    var s=document.getElementById(id); if(s) s.style.display= done ? "" : "none";
+  });
+  var tb=$("#timerbar"); if(tb) tb.style.display= done ? "" : "none";
+  var rd=$("#readiness"); if(rd) rd.style.display= done ? "" : "none";
+  var fr=$("#freshness"); if(fr) fr.style.display= done ? "" : "none";
+  document.querySelectorAll('.topbar-inner a.navlink, .topbar-inner button.navlink, .topbar-inner .ghostbtn')
+    .forEach(function(n){
+      if(n.id==="setupNav") return;
+      n.style.opacity = done ? "" : ".35";
+      n.style.pointerEvents = done ? "" : "none";
+    });
+  var st=$("#setup"); if(st) st.style.display="";
+}
+
+/* =================================================================
+   VISION PLAN. Eight components. Steve's labels, canonical structure.
+   ================================================================= */
+function vtoFilled(){
+  var v=state.vto, n=0;
+  if((v.coreFocus.niche||"").trim()) n++;
+  if((v.coreFocus.purpose||"").trim()) n++;
+  if((v.values||[]).some(function(x){ return (x.name||"").trim(); })) n++;
+  if((v.bhag.statement||"").trim()) n++;
+  if((v.tenYear.target||"").trim()) n++;
+  if((v.picture.revenue||"").trim()||(v.picture.bullets||[]).some(function(b){ return (b.text||"").trim(); })) n++;
+  if((v.oneYear.revenue||"").trim()||(curPlan()&&(curPlan().annualGoals||[]).length)) n++;
+  if((v.marketing.targetMarket||"").trim()||(v.marketing.uniques||[]).some(function(u){ return (u.text||"").trim(); })) n++;
+  return n;
+}
+function vGroup(key,title,count,body){
+  var open=!!state.openDepts["vto:"+key];
+  return '<div class="dept '+(open?'open':'')+'">'+
+    '<div class="dept-head '+(open?'open':'')+'" data-d="vto:'+key+'">'+
+      '<span class="chev">&#9654;</span><span class="dname">'+escapeHtml(title)+'</span>'+
+      '<span class="dcount">'+escapeHtml(count)+'</span></div>'+
+    (open?'<div class="dept-body">'+body+'</div>':'')+'</div>';
+}
+function stmt(id,val,ph,rows){
+  return '<textarea class="vtostmt" id="'+id+'" rows="'+(rows||2)+'" placeholder="'+escapeHtml(ph)+'">'+
+         escapeHtml(val||"")+'</textarea>';
+}
+function listRows(arr,cls,ph1,ph2){
+  if(!arr.length) return '<div class="empty">Nothing added yet.</div>';
+  return arr.slice().sort(function(a,b){return a.order-b.order;}).map(function(it){
+    return '<div class="vitem" draggable="true" data-id="'+it.id+'">'+
+      '<span class="vgrip">&#9776;</span><div class="vfields">'+
+      '<input type="text" class="'+cls+'-a vname" data-id="'+it.id+'" placeholder="'+escapeHtml(ph1)+'" value="'+escapeHtml(it.name!==undefined?it.name:(it.text||""))+'">'+
+      (ph2?'<input type="text" class="'+cls+'-b" data-id="'+it.id+'" placeholder="'+escapeHtml(ph2)+'" value="'+escapeHtml(it.behavior||"")+'">':'')+
+      '</div><button class="vdel" data-'+cls+'-del="'+it.id+'" title="Remove">&times;</button></div>';
+  }).join("");
+}
+function renderVision(){
+  var host=$("#vision"); if(!host) return;
+  var v=state.vto, hy=v.horizonYears||3, yr=NOW.getFullYear();
+  var h='';
+  h+='<div class="sec-head"><span class="sec-num">V</span><h2>Vision Plan</h2>'+
+     '<span class="hint">Where the company is going, and what has to be true to get there.</span></div>';
+
+  /* Core Focus: Vision (niche) + Mission (purpose) */
+  h+='<div class="block"><h3>Core focus</h3>'+
+     '<p class="blocknote">Two statements the whole team should be able to repeat from memory.</p>'+
+     '<div class="vtogrid">'+
+     '<div><p class="vtolabel">Vision <span class="done">'+((v.coreFocus.niche||"").trim()?"&#10003;":"")+'</span></p>'+
+       stmt("vNiche",v.coreFocus.niche,"What we do, for whom, better than anyone else.",3)+'</div>'+
+     '<div><p class="vtolabel">Purpose / Mission <span class="done">'+((v.coreFocus.purpose||"").trim()?"&#10003;":"")+'</span></p>'+
+       stmt("vPurpose",v.coreFocus.purpose,"Why this company exists, beyond making money.",3)+'</div>'+
+     '</div></div>';
+
+  /* Values */
+  var vals=v.values||[];
+  var valBody='<p class="blocknote">The behaviors you hire, review, and fire against. Three to seven is the useful range.</p>'+
+    listRows(vals,"val","Value, e.g. Do the hard thing first","What it looks like in practice")+
+    '<div class="vaddrow"><input type="text" id="vValNew" placeholder="Add a value" style="flex:1;min-width:200px;">'+
+    '<button class="btn sm" id="vValAdd">Add value</button></div>'+
+    (vals.length>7?'<div class="vsoftwarn">'+vals.length+' values. Teams remember three to seven. Consider trimming.</div>':'');
+  h+='<div class="block"><h3>Core values</h3>'+valBody+'</div>';
+
+  /* BHAG + 10-Year: ONE group, one mountain */
+  var tyBody='<p class="blocknote">In EOS these are one mountain, not two. State it once, then make it measurable.</p>'+
+    '<div class="vtogrid">'+
+    '<div><p class="vtolabel">BHAG</p>'+stmt("vBhag",v.bhag.statement,"The big, almost uncomfortable long-range goal.",3)+
+      '<div class="vaddrow"><label style="font-size:11px;color:var(--text-dim);">By year</label>'+
+      '<input type="number" id="vBhagBy" value="'+escapeHtml(v.bhag.by||String(yr+10))+'" style="width:90px;"></div></div>'+
+    '<div><p class="vtolabel">10-year target</p>'+stmt("vTenTarget",v.tenYear.target,"The same mountain as a number. e.g. $100M revenue.",3)+
+      '<div class="vaddrow"><label style="font-size:11px;color:var(--text-dim);">By year</label>'+
+      '<input type="number" id="vTenBy" value="'+escapeHtml(v.tenYear.by||String(yr+10))+'" style="width:90px;">'+
+      '<label style="font-size:11px;color:var(--text-dim);">Progress %</label>'+
+      '<input type="number" id="vTenPct" min="0" max="100" value="'+(v.tenYear.percent||0)+'" style="width:80px;"></div>'+
+      '<div class="bar" style="margin-top:8px;"><i style="width:'+Math.max(0,Math.min(100,v.tenYear.percent||0))+'%"></i></div></div>'+
+    '</div>';
+  h+=vGroup("tenyear","BHAG and 10-year target",((v.bhag.statement||"").trim()?"set":"empty"),tyBody);
+
+  /* Picture: 3 or 5 year */
+  var bullets=v.picture.bullets||[];
+  var picBody='<p class="blocknote">What the company looks like at the end of this horizon. Concrete enough to recognize.</p>'+
+    '<div class="vtogrid">'+
+    '<div><p class="vtolabel">Revenue</p><input type="text" id="vPicRev" value="'+escapeHtml(v.picture.revenue||"")+'" placeholder="e.g. $28M"></div>'+
+    '<div><p class="vtolabel">Profit</p><input type="text" id="vPicProfit" value="'+escapeHtml(v.picture.profit||"")+'" placeholder="e.g. 18% EBITDA"></div>'+
+    '<div><p class="vtolabel">Measurables</p><input type="text" id="vPicMeas" value="'+escapeHtml(v.picture.measurables||"")+'" placeholder="e.g. 240 clients, 95% retention"></div>'+
+    '</div><p class="vtolabel" style="margin-top:12px;">What it looks like</p>'+
+    listRows(bullets,"pic","Something that will be true then",null)+
+    '<div class="vaddrow"><input type="text" id="vPicNew" placeholder="Add a line" style="flex:1;min-width:200px;">'+
+    '<button class="btn sm" id="vPicAdd">Add</button></div>';
+  h+=vGroup("picture",hy+"-year picture",((v.picture.revenue||"").trim()||bullets.length?"set":"empty"),picBody);
+
+  /* One year: DERIVED from annualGoals */
+  var goals=(curPlan()&&curPlan().annualGoals)||[];
+  var oneBody='<p class="blocknote">This year in numbers, plus the annual goals you already track on the board. '+
+    'Edit the goals in the Rocks section so there is only ever one copy.</p>'+
+    '<div class="vtogrid">'+
+    '<div><p class="vtolabel">Revenue</p><input type="text" id="vOneRev" value="'+escapeHtml(v.oneYear.revenue||"")+'" placeholder="e.g. $12M"></div>'+
+    '<div><p class="vtolabel">Profit</p><input type="text" id="vOneProfit" value="'+escapeHtml(v.oneYear.profit||"")+'" placeholder="e.g. 12% EBITDA"></div>'+
+    '<div><p class="vtolabel">Measurables</p><input type="text" id="vOneMeas" value="'+escapeHtml(v.oneYear.measurables||"")+'" placeholder="e.g. 30 net new clients"></div>'+
+    '</div><p class="vtolabel" style="margin-top:12px;">Annual goals ('+goals.length+')</p>';
+  oneBody+= goals.length
+    ? '<div>'+goals.map(function(g){
+        return '<div class="vitem"><div class="vfields"><div class="vname">'+escapeHtml(g.text||"")+
+          '</div><div style="font-size:11.5px;color:var(--text-dim);">'+escapeHtml(g.target||"no target set")+
+          ' &middot; '+(g.percent||0)+'% &middot; '+escapeHtml(g.owner||"unassigned")+'</div></div></div>';
+      }).join("")+'</div><div class="vaddrow"><a class="ghostbtn" href="#rocks">Edit goals in Rocks</a></div>'
+    : '<div class="empty">No annual goals yet. <a href="#rocks" style="color:var(--steel);">Add them in the Rocks section.</a></div>';
+  h+=vGroup("oneyear","1-year plan",goals.length+" goal"+(goals.length===1?"":"s"),oneBody);
+
+  /* Marketing strategy */
+  var uniq=v.marketing.uniques||[];
+  var mkBody='<p class="blocknote">Who you sell to, why they pick you, and what you promise. This is the part buyers pay a multiple for.</p>'+
+    '<div><p class="vtolabel">Target market</p>'+stmt("vMkTarget",v.marketing.targetMarket,"The list. Demographic, geographic, and who qualifies.",2)+'</div>'+
+    '<p class="vtolabel" style="margin-top:12px;">Uniques</p>'+
+    listRows(uniq,"unq","What makes you different",null)+
+    '<div class="vaddrow"><input type="text" id="vUnqNew" placeholder="Add a unique" style="flex:1;min-width:200px;">'+
+    '<button class="btn sm" id="vUnqAdd">Add</button></div>'+
+    '<div class="vtogrid" style="margin-top:12px;">'+
+    '<div><p class="vtolabel">Proven process</p>'+stmt("vMkProcess",v.marketing.process,"The named steps you take every client through.",2)+'</div>'+
+    '<div><p class="vtolabel">Guarantee</p>'+stmt("vMkGuarantee",v.marketing.guarantee,"The promise that removes the risk of saying yes.",2)+'</div>'+
+    '</div>';
+  h+=vGroup("marketing","Marketing strategy",((v.marketing.targetMarket||"").trim()||uniq.length?"set":"empty"),mkBody);
+
+  /* Traction links: never duplicate Rocks or Issues */
+  var rk=curRocks?curRocks().length:0, iss=(state.ids||[]).length;
+  h+='<div class="block"><h3>Traction</h3>'+
+     '<p class="blocknote">The execution half of the plan lives on the board, not here.</p>'+
+     '<a class="tractionchip" href="#rocks"><span class="tnum">'+rk+'</span> Rocks this quarter</a>'+
+     '<a class="tractionchip" href="#ids"><span class="tnum">'+iss+'</span> Open issues</a>'+
+     '<div class="vaddrow" style="margin-top:12px;">'+
+     '<button class="ghostbtn" id="vExpandAll">Expand all</button>'+
+     '<button class="ghostbtn" id="vCollapseAll">Collapse all</button>'+
+     '<button class="ghostbtn" id="vPrint">Print the vision page</button>'+
+     '<span class="horizonseg" id="vHorizon"><button data-h="3"'+(hy===3?' class="on"':'')+'>3-year</button>'+
+     '<button data-h="5"'+(hy===5?' class="on"':'')+'>5-year</button></span></div>'+
+     '</div>';
+
+  host.innerHTML=h;
+  wireVision();
+  var nv=$("#nav-vto"); if(nv) nv.textContent=vtoFilled()+"/8";
+}
+function wireVision(){
+  var v=state.vto;
+  /* collapse groups, reusing the existing openDepts store */
+  $("#vision").querySelectorAll(".dept-head").forEach(function(hd){
+    hd.onclick=function(){ var k=hd.dataset.d; state.openDepts[k]=!state.openDepts[k]; save(); renderVision(); };
+  });
+  var bindText=function(id,setter){
+    var e=$("#"+id); if(!e) return;
+    e.oninput=function(){ setter(e.value); state._rev=Date.now(); storeSet(CURRENT_KEY,JSON.stringify(state)); syncUp(); };
+    e.onblur=function(){ renderVision(); };
+  };
+  bindText("vNiche",function(x){ v.coreFocus.niche=x; });
+  bindText("vPurpose",function(x){ v.coreFocus.purpose=x; });
+  bindText("vBhag",function(x){ v.bhag.statement=x; });
+  bindText("vTenTarget",function(x){ v.tenYear.target=x; });
+  bindText("vPicRev",function(x){ v.picture.revenue=x; });
+  bindText("vPicProfit",function(x){ v.picture.profit=x; });
+  bindText("vPicMeas",function(x){ v.picture.measurables=x; });
+  bindText("vOneRev",function(x){ v.oneYear.revenue=x; });
+  bindText("vOneProfit",function(x){ v.oneYear.profit=x; });
+  bindText("vOneMeas",function(x){ v.oneYear.measurables=x; });
+  bindText("vMkTarget",function(x){ v.marketing.targetMarket=x; });
+  bindText("vMkProcess",function(x){ v.marketing.process=x; });
+  bindText("vMkGuarantee",function(x){ v.marketing.guarantee=x; });
+  var num=function(id,setter){ var e=$("#"+id); if(e) e.onchange=function(){ setter(e.value); save(); renderVision(); }; };
+  num("vBhagBy",function(x){ v.bhag.by=x; });
+  num("vTenBy",function(x){ v.tenYear.by=x; });
+  num("vTenPct",function(x){ v.tenYear.percent=Math.max(0,Math.min(100,+x||0)); });
+
+  var addTo=function(btnId,inpId,arr,field){
+    var b=$("#"+btnId), i=$("#"+inpId); if(!b||!i) return;
+    var go=function(){ var t=i.value.trim(); if(!t) return;
+      var o={id:uid(),order:arr.length,u:Date.now()}; o[field]=t; if(field==="name") o.behavior="";
+      arr.push(o); i.value=""; save(); renderVision();
+      var again=$("#"+inpId); if(again) again.focus(); };
+    b.onclick=go;
+    i.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); go(); } });
+  };
+  v.values=v.values||[]; v.picture.bullets=v.picture.bullets||[]; v.marketing.uniques=v.marketing.uniques||[];
+  addTo("vValAdd","vValNew",v.values,"name");
+  addTo("vPicAdd","vPicNew",v.picture.bullets,"text");
+  addTo("vUnqAdd","vUnqNew",v.marketing.uniques,"text");
+
+  var wireList=function(cls,arr,aField,bField){
+    document.querySelectorAll("."+cls+"-a").forEach(function(inp){
+      inp.oninput=function(){ var it=arr.find(function(x){ return x.id===inp.dataset.id; });
+        if(it){ it[aField]=inp.value; it.u=Date.now(); storeSet(CURRENT_KEY,JSON.stringify(state)); syncUp(); } };
+    });
+    if(bField) document.querySelectorAll("."+cls+"-b").forEach(function(inp){
+      inp.oninput=function(){ var it=arr.find(function(x){ return x.id===inp.dataset.id; });
+        if(it){ it[bField]=inp.value; it.u=Date.now(); storeSet(CURRENT_KEY,JSON.stringify(state)); syncUp(); } };
+    });
+    document.querySelectorAll("[data-"+cls+"-del]").forEach(function(b){
+      b.onclick=function(){
+        var id=b.getAttribute("data-"+cls+"-del"), i=arr.findIndex(function(x){ return x.id===id; });
+        if(i<0) return; var removed=arr.splice(i,1)[0];
+        save(); renderVision();
+        banner("info","Removed <b>"+escapeHtml(removed[aField]||"item")+"</b>.","Undo",function(){
+          arr.push(removed); save(); renderVision(); _banners=[]; renderBanners(); });
+      };
+    });
+  };
+  wireList("val",v.values,"name","behavior");
+  wireList("pic",v.picture.bullets,"text",null);
+  wireList("unq",v.marketing.uniques,"text",null);
+
+  var e;
+  e=$("#vExpandAll"); if(e) e.onclick=function(){
+    ["tenyear","picture","oneyear","marketing"].forEach(function(k){ state.openDepts["vto:"+k]=true; });
+    save(); renderVision(); };
+  e=$("#vCollapseAll"); if(e) e.onclick=function(){
+    ["tenyear","picture","oneyear","marketing"].forEach(function(k){ delete state.openDepts["vto:"+k]; });
+    save(); renderVision(); };
+  e=$("#vPrint"); if(e) e.onclick=function(){
+    ["tenyear","picture","oneyear","marketing"].forEach(function(k){ state.openDepts["vto:"+k]=true; });
+    renderVision(); document.body.classList.remove("print-full");
+    setTimeout(function(){ window.print(); },120); };
+  document.querySelectorAll("#vHorizon button").forEach(function(b){
+    b.onclick=function(){ state.vto.horizonYears=+b.dataset.h; save(); renderVision(); };
+  });
+}
+
+/* =================================================================
+   MEETING TIMER. Canonical L10 segments.
+   ================================================================= */
+var TIMER_SEGMENTS=[
+  {name:"Segue",min:5},{name:"Scorecard",min:5},{name:"Rock review",min:5},
+  {name:"Headlines",min:5},{name:"To-do review",min:5},{name:"IDS",min:60},{name:"Conclude",min:5}
+];
+var _tick=null;
+function renderTimer(){
+  var host=$("#timerbar"); if(!host) return;
+  var t=state.timer||(state.timer={segment:0,startedAt:null,elapsed:{}});
+  var running=!!t.startedAt;
+  var h='<span style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-dim);">Meeting</span>';
+  TIMER_SEGMENTS.forEach(function(s,i){
+    var used=Math.round((t.elapsed[i]||0)/60000);
+    var over=used>s.min;
+    h+='<button class="tseg'+(t.segment===i?' on':'')+(over?' over':'')+'" data-seg="'+i+'">'+
+       escapeHtml(s.name)+' <span style="opacity:.75">'+used+'/'+s.min+'m</span></button>';
+  });
+  var cur=t.elapsed[t.segment]||0;
+  if(running) cur += Date.now()-t.startedAt;
+  var mm=Math.floor(cur/60000), ss=Math.floor((cur%60000)/1000);
+  h+='<span class="tclock">'+mm+":"+(ss<10?"0":"")+ss+'</span>';
+  h+='<button class="ghostbtn" id="tToggle">'+(running?"Pause":"Start")+'</button>';
+  h+='<button class="ghostbtn" id="tReset">Reset</button>';
+  host.innerHTML=h;
+  host.querySelectorAll("[data-seg]").forEach(function(b){
+    b.onclick=function(){ commitTimer(); t.segment=+b.dataset.seg; save(); renderTimer(); };
+  });
+  $("#tToggle").onclick=function(){
+    if(t.startedAt){ commitTimer(); } else { t.startedAt=Date.now(); }
+    save(); renderTimer(); startTick();
+  };
+  $("#tReset").onclick=function(){
+    state.timer={segment:0,startedAt:null,elapsed:{}}; save(); renderTimer(); startTick();
+  };
+  startTick();
+}
+function commitTimer(){
+  var t=state.timer; if(!t||!t.startedAt) return;
+  t.elapsed[t.segment]=(t.elapsed[t.segment]||0)+(Date.now()-t.startedAt);
+  t.startedAt=null;
+}
+function startTick(){
+  clearInterval(_tick);
+  if(state.timer && state.timer.startedAt){
+    _tick=setInterval(function(){
+      var t=state.timer; if(!t.startedAt){ clearInterval(_tick); return; }
+      var cur=(t.elapsed[t.segment]||0)+(Date.now()-t.startedAt);
+      var mm=Math.floor(cur/60000), ss=Math.floor((cur%60000)/1000);
+      var c=document.querySelector(".tclock"); if(c) c.textContent=mm+":"+(ss<10?"0":"")+ss;
+    },1000);
+  }
+}
+
+/* =================================================================
+   BACKUP, EXPORT, IMPORT, MERGE
+   ================================================================= */
+function slugify(s){ return String(s||"board").trim().replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"")||"board"; }
+function download(name,text,mime){
+  var b=new Blob([text],{type:mime||"application/json"}), u=URL.createObjectURL(b);
+  var a=document.createElement("a"); a.href=u; a.download=name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(u); },2000);
+}
+function exportBackup(){
+  var nm="EOSDashboard_"+slugify(state.company.name)+"_"+isoToday()+".json";
+  download(nm, JSON.stringify(state,null,1));
+  state.config.lastBackupAt=new Date().toISOString();
+  storeSet(CURRENT_KEY,JSON.stringify(state));
+  renderBackupPill(); toast("Backup downloaded");
+}
+function renderBackupPill(){
+  var p=$("#backupPill"); if(!p) return;
+  var c=state.config||{};
+  /* When a data folder is in use, the pill reports that folder's live status,
+     because that is the thing the user is relying on. */
+  if(c.folderEnabled && c.folderName){
+    if(_fsState==="needs-permission"){
+      p.textContent="Folder needs permission"; p.className="backuppill warn";
+      p.title="Click Reconnect in the banner so changes keep saving to "+c.folderName; return;
+    }
+    if(_fsState==="error"){
+      p.textContent="Folder write failed"; p.className="backuppill bad";
+      p.title="The last write to "+c.folderName+" failed. Your work is still in this browser."; return;
+    }
+    var w=c.lastFolderWriteAt ? Math.round((Date.now()-new Date(c.lastFolderWriteAt))/60000) : null;
+    p.textContent = w===null ? "Saving to "+c.folderName
+                  : w<1 ? "Saved to "+c.folderName+" just now"
+                  : w<60 ? "Saved to "+c.folderName+" "+w+"m ago"
+                  : "Saved to "+c.folderName+" "+Math.round(w/60)+"h ago";
+    p.className="backuppill ok";
+    p.title="Data file: "+dataFileName()+" in "+c.folderName;
+    return;
+  }
+  var at=c.lastBackupAt;
+  if(!at){ p.textContent="Never backed up"; p.className="backuppill bad";
+    p.title="Click to download a backup, or set a data folder in Setup"; return; }
+  var days=Math.floor((Date.now()-new Date(at))/86400000);
+  p.textContent="Last backup: "+(days===0?"today":days+"d");
+  p.className="backuppill "+(days<8?"ok":days<15?"warn":"bad");
+  p.title="Click to download a backup now";
+}
+/* union by id, newest u wins, tombstones block resurrection */
+function mergeList(local,incoming){
+  var by={}, order=[];
+  (local||[]).forEach(function(it){ by[it.id]=it; order.push(it.id); });
+  var added=0, updated=0, kept=0;
+  (incoming||[]).forEach(function(it){
+    var cur=by[it.id];
+    if(!cur){ by[it.id]=it; order.push(it.id); added++; return; }
+    if((it.u||0) > (cur.u||0)){ by[it.id]=it; updated++; } else kept++;
+  });
+  var out=order.map(function(id){ return by[id]; }).filter(function(it){ return it && !it._del; });
+  return {list:out, added:added, updated:updated, kept:kept};
+}
+function mergeState(local,incoming){
+  var stats={added:0,updated:0,kept:0};
+  var roll=function(r){ stats.added+=r.added; stats.updated+=r.updated; stats.kept+=r.kept; return r.list; };
+  ["ids","todos","headlines"].forEach(function(k){
+    local[k]=roll(mergeList(local[k],incoming[k]));
+  });
+  Object.keys(incoming.plans||{}).forEach(function(y){
+    local.plans[y]=local.plans[y]||{annualGoals:[],quarters:{Q1:{rocks:[]},Q2:{rocks:[]},Q3:{rocks:[]},Q4:{rocks:[]}}};
+    local.plans[y].annualGoals=roll(mergeList(local.plans[y].annualGoals,incoming.plans[y].annualGoals));
+    QUARTERS.forEach(function(q){
+      var lq=local.plans[y].quarters[q]||{rocks:[]}, iq=(incoming.plans[y].quarters||{})[q]||{rocks:[]};
+      lq.rocks=roll(mergeList(lq.rocks,iq.rocks)); local.plans[y].quarters[q]=lq;
+    });
+  });
+  return stats;
+}
+function importBackupText(txt){
+  var inc; try{ inc=JSON.parse(txt); }catch(e){ toast("That file is not valid JSON"); return; }
+  if(!inc || typeof inc!=="object"){ toast("That file is not a backup"); return; }
+  if(inc.schema && inc.schema!==4){ var m=migrate(inc); if(m) inc=m; }
+  var st=mergeState(state,inc);
+  if(inc.vto && vtoFilled()===0) state.vto=inc.vto;
+  if(inc.company && !(state.company.name||"").trim()) state.company=inc.company;
+  syncRosterFromCompany(); save(); renderAll();
+  toast("Merged "+st.added+" new, updated "+st.updated+", kept yours on "+st.kept);
+  logActivity("Imported a backup: +"+st.added+" new, "+st.updated+" updated");
+}
+function logActivity(msg){
+  state.activity=state.activity||[];
+  state.activity.unshift({at:new Date().toISOString(),msg:msg});
+  state.activity=state.activity.slice(0,50);
+}
+
+/* ---- delta: one person's own items only ---- */
+function buildDelta(personName){
+  var mine=function(arr){ return (arr||[]).filter(function(x){ return (x.owner||"")===personName; }); };
+  var d={ v:1, from:personName, at:Date.now(), company:state.company.name||"",
+          ids:mine(state.ids), todos:mine(state.todos), rocks:{} };
+  Object.keys(state.plans||{}).forEach(function(y){
+    QUARTERS.forEach(function(q){
+      var rr=mine(((state.plans[y].quarters||{})[q]||{rocks:[]}).rocks);
+      if(rr.length){ d.rocks[y+"|"+q]=rr; }
+    });
+  });
+  return btoa(unescape(encodeURIComponent(JSON.stringify(d))));
+}
+function absorbDelta(code){
+  var d; try{ d=JSON.parse(decodeURIComponent(escape(atob((code||"").trim())))); }
+  catch(e){ toast("That update code could not be read"); return; }
+  if(!d || d.v!==1){ toast("Unrecognized update code"); return; }
+  var inc={ plans:{}, ids:d.ids||[], todos:d.todos||[], headlines:[] };
+  Object.keys(d.rocks||{}).forEach(function(key){
+    var p=key.split("|"), y=p[0], q=p[1];
+    inc.plans[y]=inc.plans[y]||{annualGoals:[],quarters:{}};
+    inc.plans[y].quarters[q]={rocks:d.rocks[key]};
+  });
+  var st=mergeState(state,inc);
+  save(); renderAll();
+  toast("Absorbed "+(st.added+st.updated)+" from "+(d.from||"a teammate"));
+  logActivity("Absorbed updates from "+(d.from||"a teammate"));
+}
+
+/* ---- publish: self-contained read-only snapshot with an update path ---- */
+function publishBoard(){
+  var v=state.vto, co=state.company, goals=(curPlan()&&curPlan().annualGoals)||[];
+  var rocks=curRocks?curRocks():[];
+  var esc=escapeHtml;
+  var names=(co.people||[]).map(function(p){ return p.name; }).filter(Boolean);
+  var payload=btoa(unescape(encodeURIComponent(JSON.stringify({
+    company:co.name||"", people:co.people||[], vto:v,
+    plans:state.plans, ids:state.ids, todos:state.todos, headlines:state.headlines,
+    view:state.view, at:Date.now()
+  }))));
+  var css='body{font-family:Inter,-apple-system,Segoe UI,sans-serif;background:#0a1228;color:#e8ebf2;'+
+    'margin:0;padding:0 0 50px;font-size:14px;line-height:1.45}.w{max-width:1000px;margin:0 auto;padding:18px 20px}'+
+    'h1{color:#fff;font-size:22px;margin:0 0 2px}.sub{color:#a8b0c0;font-size:12.5px;margin:0 0 18px}'+
+    'h2{color:#fff;font-size:16px;border-bottom:2px solid #4682B4;padding-bottom:6px;margin:26px 0 12px}'+
+    '.b{background:#142042;border-radius:8px;padding:14px 16px;margin-bottom:12px}'+
+    '.lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#a8b0c0;margin:0 0 4px}'+
+    '.st{color:#e8ebf2;margin:0 0 12px;white-space:pre-wrap}.g{display:grid;'+
+    'grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}'+
+    '.it{background:#0f1a36;border:1px solid #1d2b54;border-radius:6px;padding:9px 11px;margin-bottom:6px}'+
+    '.it b{color:#fff}.meta{font-size:11.5px;color:#a8b0c0}'+
+    '.ok{color:#3CB371}.warn{color:#D97706}.bad{color:#e0544f}'+
+    'select,input,button,textarea{font:inherit;font-size:13px;background:#0a1228;color:#e8ebf2;'+
+    'border:1px solid #1d2b54;border-radius:6px;padding:7px 9px}'+
+    'button{background:#4682B4;color:#fff;border-color:#4682B4;font-weight:600;cursor:pointer}'+
+    '.ro{background:rgba(70,130,180,.14);border:1px solid #4682B4;border-radius:6px;padding:10px 14px;'+
+    'font-size:12.5px;margin-bottom:16px}code{word-break:break-all;font-size:11px;color:#C9CCD6}';
+  var statusCls=function(s){ return s==="ontrack"?"ok":s==="atrisk"?"warn":"bad"; };
+  var body='';
+  body+='<h1>'+esc(co.name||"Leadership board")+'</h1>';
+  body+='<p class="sub">Snapshot taken '+esc(isoToday())+'. Read-only.</p>';
+  body+='<div class="ro"><b>This is a read-only snapshot.</b> To send your own updates, scroll to '+
+        '<b>Send my updates</b> at the bottom.</div>';
+  if(vtoFilled()){
+    body+='<h2>Vision</h2><div class="b"><div class="g">'+
+      '<div><p class="lbl">Vision</p><p class="st">'+esc(v.coreFocus.niche||"not set")+'</p></div>'+
+      '<div><p class="lbl">Purpose</p><p class="st">'+esc(v.coreFocus.purpose||"not set")+'</p></div>'+
+      '<div><p class="lbl">BHAG</p><p class="st">'+esc(v.bhag.statement||"not set")+'</p></div>'+
+      '<div><p class="lbl">10-year target</p><p class="st">'+esc(v.tenYear.target||"not set")+'</p></div>'+
+      '</div>';
+    if((v.values||[]).length){
+      body+='<p class="lbl" style="margin-top:8px">Core values</p>'+
+        v.values.map(function(x){ return '<div class="it"><b>'+esc(x.name||"")+'</b>'+
+          (x.behavior?'<div class="meta">'+esc(x.behavior)+'</div>':'')+'</div>'; }).join("");
+    }
+    body+='</div>';
+  }
+  if(goals.length){
+    body+='<h2>Annual goals</h2><div class="b">'+goals.map(function(g){
+      return '<div class="it"><b>'+esc(g.text||"")+'</b><div class="meta">'+esc(g.target||"")+
+        ' &middot; '+(g.percent||0)+'% &middot; '+esc(g.owner||"unassigned")+'</div></div>'; }).join("")+'</div>';
+  }
+  body+='<h2>Rocks this quarter ('+rocks.length+')</h2><div class="b">'+
+    (rocks.length?rocks.map(function(r){
+      return '<div class="it"><b>'+esc(r.title||"")+'</b><div class="meta">'+esc(r.owner||"unassigned")+
+        ' &middot; <span class="'+statusCls(r.status)+'">'+esc(r.status||"")+'</span> &middot; '+(r.percent||0)+'%</div></div>';
+    }).join(""):'<div class="meta">No Rocks yet.</div>')+'</div>';
+  var opent=(state.todos||[]).filter(function(t){ return t.status!=="Complete"; });
+  body+='<h2>Open to-dos ('+opent.length+')</h2><div class="b">'+
+    (opent.length?opent.map(function(t){
+      return '<div class="it"><b>'+esc(t.desc||"")+'</b><div class="meta">'+esc(t.owner||"unassigned")+
+        (t.due?' &middot; due '+esc(t.due):'')+'</div></div>'; }).join(""):'<div class="meta">Nothing open.</div>')+'</div>';
+  var openi=(state.ids||[]).filter(function(i){ return i.status!=="Resolved"; });
+  body+='<h2>Open issues ('+openi.length+')</h2><div class="b">'+
+    (openi.length?openi.map(function(i){
+      return '<div class="it"><b>'+esc(i.title||"")+'</b><div class="meta">'+esc(i.owner||"unassigned")+
+        ' &middot; '+esc(i.priority||"")+'</div></div>'; }).join(""):'<div class="meta">Nothing open.</div>')+'</div>';
+
+  body+='<h2>Send my updates</h2><div class="b">'+
+    '<p class="meta">Pick your name, adjust your own items, then copy the code and paste it back to '+
+    'whoever owns the board.</p>'+
+    '<div style="margin:10px 0"><select id="who"><option value="">Who are you?</option>'+
+    names.map(function(n){ return '<option>'+esc(n)+'</option>'; }).join("")+'</select></div>'+
+    '<div id="mine"></div>'+
+    '<div style="margin-top:12px"><button id="mk">Copy my updates</button></div>'+
+    '<p class="meta" id="out" style="margin-top:10px"></p></div>';
+
+  var script='var S=JSON.parse(decodeURIComponent(escape(atob("'+payload+'"))));'+
+    'var Q=["Q1","Q2","Q3","Q4"];'+
+    'function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"})[c]})}'+
+    'function myRocks(n){var o=[];Object.keys(S.plans||{}).forEach(function(y){Q.forEach(function(q){'+
+    'var qq=(S.plans[y].quarters||{})[q]||{rocks:[]};(qq.rocks||[]).forEach(function(r){'+
+    'if((r.owner||"")===n)o.push({y:y,q:q,r:r})})})});return o}'+
+    'function render(){var n=document.getElementById("who").value,h="";'+
+    'if(!n){document.getElementById("mine").innerHTML="";return}'+
+    'var rk=myRocks(n);h+="<p class=\\"lbl\\">Your Rocks</p>";'+
+    'if(!rk.length)h+="<p class=\\"meta\\">None assigned to you.</p>";'+
+    'rk.forEach(function(x,i){h+="<div class=\\"it\\"><b>"+esc(x.r.title)+"</b><div class=\\"meta\\" style=\\"margin-top:6px\\">"+'+
+    '"<input type=\\"number\\" min=\\"0\\" max=\\"100\\" style=\\"width:80px\\" data-rp=\\""+i+"\\" value=\\""+(x.r.percent||0)+"\\"> % &nbsp;"+'+
+    '"<select data-rs=\\""+i+"\\">"+["ontrack","atrisk","offtrack"].map(function(s){'+
+    'return "<option"+(x.r.status===s?" selected":"")+">"+s+"</option>"}).join("")+"</select></div></div>"});'+
+    'var td=(S.todos||[]).filter(function(t){return (t.owner||"")===n});'+
+    'h+="<p class=\\"lbl\\" style=\\"margin-top:12px\\">Your to-dos</p>";'+
+    'if(!td.length)h+="<p class=\\"meta\\">None assigned to you.</p>";'+
+    'td.forEach(function(t,i){h+="<div class=\\"it\\"><b>"+esc(t.desc)+"</b><div class=\\"meta\\" style=\\"margin-top:6px\\">"+'+
+    '"<select data-ts=\\""+i+"\\">"+["Not Started","In Progress","Complete"].map(function(s){'+
+    'return "<option"+(t.status===s?" selected":"")+">"+s+"</option>"}).join("")+"</select></div></div>"});'+
+    'h+="<p class=\\"lbl\\" style=\\"margin-top:12px\\">Add a to-do</p>"+'+
+    '"<input id=\\"nt\\" placeholder=\\"Something you committed to\\" style=\\"width:100%;max-width:420px\\">";'+
+    'h+="<p class=\\"lbl\\" style=\\"margin-top:12px\\">Add an issue</p>"+'+
+    '"<input id=\\"ni\\" placeholder=\\"Something to discuss\\" style=\\"width:100%;max-width:420px\\">";'+
+    'document.getElementById("mine").innerHTML=h}'+
+    'document.getElementById("who").onchange=render;'+
+    'document.getElementById("mk").onclick=function(){'+
+    'var n=document.getElementById("who").value;if(!n){alert("Pick your name first");return}'+
+    'var now=Date.now(),rk=myRocks(n),d={v:1,from:n,at:now,company:S.company,ids:[],todos:[],rocks:{}};'+
+    'document.querySelectorAll("[data-rp]").forEach(function(el){var x=rk[+el.dataset.rp];if(x){'+
+    'x.r.percent=+el.value;x.r.u=now}});'+
+    'document.querySelectorAll("[data-rs]").forEach(function(el){var x=rk[+el.dataset.rs];if(x){'+
+    'x.r.status=el.value;x.r.u=now}});'+
+    'rk.forEach(function(x){var k=x.y+"|"+x.q;d.rocks[k]=d.rocks[k]||[];d.rocks[k].push(x.r)});'+
+    'var td=(S.todos||[]).filter(function(t){return (t.owner||"")===n});'+
+    'document.querySelectorAll("[data-ts]").forEach(function(el){var t=td[+el.dataset.ts];if(t){'+
+    't.status=el.value;t.u=now;d.todos.push(t)}});'+
+    'var nt=document.getElementById("nt");if(nt&&nt.value.trim())d.todos.push({id:"t"+now+"a",owner:n,'+
+    'desc:nt.value.trim(),due:"",status:"Not Started",u:now});'+
+    'var ni=document.getElementById("ni");if(ni&&ni.value.trim())d.ids.push({id:"i"+now+"a",owner:n,'+
+    'title:ni.value.trim(),status:"Open",priority:"Medium",auto:false,u:now});'+
+    'var code=btoa(unescape(encodeURIComponent(JSON.stringify(d))));'+
+    'var o=document.getElementById("out");'+
+    'if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).then(function(){'+
+    'o.innerHTML="<b>Copied.</b> Paste it back to whoever owns the board."},function(){'+
+    'o.innerHTML="Copy this:<br><code>"+esc(code)+"</code>"})}'+
+    'else{o.innerHTML="Copy this:<br><code>"+esc(code)+"</code>"}};';
+
+  var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'+
+    '<meta name="viewport" content="width=device-width, initial-scale=1">'+
+    '<title>'+esc(co.name||"Board")+' snapshot</title><style>'+css+'</style></head><body><div class="w">'+
+    body+'</div><scr'+'ipt>'+script+'</scr'+'ipt></body></html>';
+  download("EOSBoard_"+slugify(co.name)+"_"+isoToday()+".html", html, "text/html");
+  toast("Snapshot downloaded. Share it with your team.");
+  logActivity("Published a board snapshot");
+}
+
+/* =================================================================
+   QUARTER ROLLOVER. Batch, using the existing per-item logic.
+   ================================================================= */
+function rollQuarter(){
+  var y=state.view.year, q=state.view.quarter;
+  var rocks=curRocks(), incomplete=rocks.filter(function(r){ return (r.percent||0)<100; });
+  var nx=nextQuarterOf(y,q);
+  if(!confirm("Roll "+q+" "+y+" forward?\n\n"+incomplete.length+" incomplete Rock"+
+     (incomplete.length===1?"":"s")+" move to "+nx.quarter+" "+nx.year+". The rest stay archived here.")) return;
+  ensurePlan(nx.year);
+  var moved=0;
+  incomplete.forEach(function(r){ rollRock(r.id); moved++; });
+  var archived=rocks.length-moved;
+  if(nx.quarter==="Q1"){
+    state.vto.history=state.vto.history||{};
+    state.vto.history[y]=JSON.parse(JSON.stringify({
+      coreFocus:state.vto.coreFocus, values:state.vto.values, bhag:state.vto.bhag,
+      tenYear:state.vto.tenYear, picture:state.vto.picture, oneYear:state.vto.oneYear,
+      marketing:state.vto.marketing
+    }));
+  }
+  state.view={year:nx.year,quarter:nx.quarter};
+  state.timer={segment:0,startedAt:null,elapsed:{}};
+  save(); renderAll();
+  toast("Carried "+moved+" Rock"+(moved===1?"":"s")+", archived "+archived+
+        (nx.quarter==="Q1"?", vision snapshot saved":""));
+  logActivity("Rolled "+q+" "+y+" forward: "+moved+" carried, "+archived+" archived");
+}
+
+function renderAll(){
+  renderBrand();
+  renderStorageNote();
+  renderSetup();
+  if(setupDone()){
+    renderVision(); renderTimer();
+    renderRevenue(); renderPipeline(); renderMHR(); renderSLA(); renderRocksArea();
+    renderHeadlines(); renderIds(); renderTodos(); renderRating(); renderReadiness();
+  }
+  renderBackupPill(); applyGate();
+}
+(async function init(){
+  if(!storagePreflight()){
+    document.body.innerHTML='<div class="wrap"><div class="banner bad" style="margin-top:24px;">'+
+      '<div><b>This browser will not save your work here.</b><br>'+
+      'Open the dashboard at <a href="https://jarvis-mobile-hosting.pages.dev/eos-dashboard/app/" '+
+      'style="color:var(--steel)">the hosted link</a>, or open this file in Chrome or Edge. '+
+      'Nothing you type on this screen can be saved.</div></div></div>';
+    return;
+  }
+  if(window._eosMultiKeys && window._eosMultiKeys.length>1){
+    banner("warn","<b>More than one board is stored in this browser.</b> Showing the most recent. "+
+      "Use Absorb updates or a backup file to switch.");
+  }
+  if(CAPS.feed) await loadFeed();
+  if(CAPS.shared){
+    const server=await syncDown();
+    if(server && server.meetingDate && (!state._rev || !server._rev || server._rev>=state._rev)){
+      const merged=migrate(server)||server;
+      state=merged;
+    }
+  }
+  if(CAPS.profile && !setupDone()){
+    try{
+      const r=await net("./eos-profile.json",{cache:"no-store"});
+      if(r.ok){
+        const prof=await r.json();
+        if(prof && prof.company) state.company=Object.assign(state.company,prof.company);
+        if(prof && prof.config)  state.config=Object.assign(state.config,prof.config);
+        if(prof && prof.roster)  state.roster=prof.roster;
+        if(prof && prof.roster && prof.roster.people && !(state.company.people||[]).length){
+          state.company.people=prof.roster.people;
+        }
+        if(prof && prof.scorecard) state.scorecard=prof.scorecard;
+        state.config.setupComplete=true;
+      }
+    }catch(e){ /* deadlock guard: fall through to setup rather than render nothing */ }
+  }
+  if(!state.config) state.config=blankState().config;
+  if(!state.company) state.company={name:"",people:[]};
+  if(!state.vto) state.vto=emptyVto();
+  if(!state.scorecard) state.scorecard={rows:[]};
+  if(!state.roster) state.roster={people:[],departments:[]};
+  if(!state.timer) state.timer={segment:0,startedAt:null,elapsed:{}};
+  if(!state.openDepts) state.openDepts={};
+  if(!state.plans || !Object.keys(state.plans).length) state.plans=blankPlans();
+  ensurePlan(CUR_YEAR);
+  if(!(state.company.people||[]).length && (state.roster.people||[]).length){
+    state.company.people=state.roster.people.map(function(p,i){
+      return {id:"p"+(i+1),name:p.name,seat:p.dept||"",seatCanonical:null,order:i}; });
+  }
+  state.view = { year: (state.plans && state.plans[CUR_YEAR]) ? CUR_YEAR : (state.plans ? Object.keys(state.plans).sort()[0] : CUR_YEAR), quarter: CUR_Q };  // always open on the current quarter
+  if(!state.ratings) state.ratings={};
+  if(!state.ratingHistory) state.ratingHistory=[];
+  if(!state.raters) state.raters = (state.roster ? state.roster.people.map(p=>p.name) : []);
+  /* Only overwrite board numbers from the feed when a feed actually exists.
+     In standalone mode applyFeed() would zero out everything typed by hand. */
+  if(CAPS.feed) applyFeed();
+  storeSet(CURRENT_KEY, JSON.stringify(state));
+  setPill(CAPS.shared ? "shared" : "local");
+  eosHostSentinel();
+  if(CAPS.feed){
+    $("#mtgDate").textContent=meetingDateLabel();
+    $("#qboPull").textContent=FEED.pulledAt.qbo;
+    $("#hsPull").textContent=FEED.pulledAt.hubspot;
+    $("#activeClients").textContent=FEED.activeClients;
+    $("#scHint").textContent="Pulled automatically. Read-only.";
+    $("#revLock").textContent="Auto-pulled · read-only";
+  } else {
+    $("#mtgDate").textContent=meetingDateLabel();
+    var fr=$("#freshness");
+    if(fr) fr.innerHTML='<strong>Meeting date:</strong> <span id="mtgDate">'+escapeHtml(meetingDateLabel())+
+      '</span> &nbsp;|&nbsp; Everything on this board is entered by hand. Nothing is connected to an '+
+      'outside system, and nothing leaves this browser.';
+    $("#scHint").textContent="Enter your numbers by hand.";
+    /* Nothing is auto-pulled in standalone mode, so no block may claim it is. */
+    document.querySelectorAll(".lock-note").forEach(function(n){
+      if(/auto-pulled/i.test(n.textContent)) n.textContent="Manual entry";
+    });
+    var mhrB=$("#mhrBlock"); if(mhrB) mhrB.remove();
+  }
+  $("#goalAdd").onclick=addGoal;
+  $("#crAdd").onclick=addCorpRock;
+  $("#irAdd").onclick=addIndRock;
+  $("#personAdd").onclick=addPerson;
+  $("#deptAdd").onclick=addDept;
+  $("#quickRockBtn").onclick=()=>openQuick("rock");
+  $("#quickGoalBtn").onclick=()=>openQuick("goal");
+  const onEnter=(id,fn)=>{ const el=$("#"+id); if(el) el.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); fn(); } }); };
+  onEnter("goalText",addGoal); onEnter("goalTarget",addGoal);
+  onEnter("crTitle",addCorpRock); onEnter("irTitle",addIndRock);
+  onEnter("personName",addPerson); onEnter("deptName",addDept);
+  onEnter("todoDesc",addTodo);
+  const applyIndGroupUI=()=>{ document.querySelectorAll('#indGroupSeg button').forEach(b=>b.classList.toggle('on', b.dataset.g===indGroupBy)); };
+  $("#indGroupSeg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ indGroupBy=b.dataset.g; try{localStorage.setItem('eos-indGroupBy',indGroupBy);}catch(e){} applyIndGroupUI(); renderIndRocks(); });
+  applyIndGroupUI();
+  $("#expandAll").onclick=()=>{ indGroupKeys().forEach(k=>state.openDepts[k]=true); save(); renderIndRocks(); };
+  $("#collapseAll").onclick=()=>{ state.openDepts={}; save(); renderIndRocks(); };
+  $("#headlineAdd").onclick=addHeadline;
+  $("#headlineInput").addEventListener("keydown",e=>{ if(e.key==="Enter") addHeadline(); });
+  $("#idsAdd").onclick=()=>addIds($("#idsTitle").value,$("#idsOwner").value,$("#idsPriority").value,false);
+  $("#idsTitle").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#idsAdd").click(); });
+  $("#archiveResolved").onclick=()=>{ state.hideResolved=!state.hideResolved; save(); renderIds(); $("#archiveResolved").textContent=state.hideResolved?"Show resolved":"Hide resolved"; };
+  $("#todoAdd").onclick=addTodo;
+  $("#clearCompleted").onclick=clearCompletedTodos;
+  $("#projConfirm").onclick=()=>{ const v=+$("#projInput").value; if(!isNaN(v)){ state.projection=v; state.projectionConfirmed=true; save(); renderRevenue(); renderIdsSuggest(); } };
+  $("#projInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); $("#projConfirm").click(); } });
+  $("#pullBtn").onclick=()=>pullLatest(false);
+  $("#resetBtn").onclick=()=>{
+    if(confirm("Clear this board and start over?\n\nYour vision, Rocks, roster, headlines, issues, and "+
+       "to-dos are all removed. Export a backup first if you might want any of it back.")){
+      exportBackup();
+      storeRemove(CURRENT_KEY); state=blankState(); save(); renderAll();
+    }
+  };
+  /* --- new controls --- */
+  $("#backupBtn").onclick=exportBackup;
+  $("#backupPill").onclick=exportBackup;
+  $("#publishBtn").onclick=publishBoard;
+  $("#absorbBtn").onclick=()=>{
+    const code=prompt("Paste the update code a team member sent you:");
+    if(code) absorbDelta(code);
+  };
+  /* hidden file input for importing a backup */
+  const imp=document.createElement("input");
+  imp.type="file"; imp.accept=".json,application/json"; imp.style.display="none";
+  imp.onchange=()=>{ const f=imp.files[0]; if(!f) return;
+    const fr2=new FileReader(); fr2.onload=()=>importBackupText(fr2.result); fr2.readAsText(f); imp.value=""; };
+  document.body.appendChild(imp);
+  window._eosImport=()=>imp.click();
+  banner("info","Bring in a board from a backup file, or a teammate's update code.","Import a backup",()=>imp.click());
+  /* hide connected-mode controls in standalone mode */
+  if(!CAPS.shared){ ["pullBtn"].forEach(id=>{ const e2=$("#"+id); if(e2) e2.style.display="none"; }); }
+
+  /* Roll the quarter, added to the quarter nav after it renders */
+  const addRollBtn=()=>{
+    if($("#rollQBtn")) return;
+    const nav=$("#qnav"); if(!nav) return;
+    const b=document.createElement("button");
+    b.className="ghostbtn"; b.id="rollQBtn"; b.textContent="Roll the quarter";
+    b.title="Carry incomplete Rocks into the next quarter and archive the rest";
+    b.onclick=rollQuarter; nav.appendChild(b);
+  };
+
+  renderAll(); addRollBtn();
+  /* Reconnect a previously chosen data folder, then offer its copy if newer. */
+  reconnectDataFolder();
+  const _origRQN=renderQuarterNav;
+  renderQuarterNav=function(){ _origRQN.apply(null,arguments); addRollBtn(); };
+
+  /* auto-backup once at meeting close, never on a save counter */
+  window._eosMeetingClosed=()=>{
+    const last=state.config.lastBackupAt ? new Date(state.config.lastBackupAt) : null;
+    if(!last || (Date.now()-last)>6*86400000) exportBackup();
+  };
+  if(CAPS.shared) setInterval(()=>pullLatest(true), 30000);
+})();
+</script>
+<script>
+/* Service worker only on the connected internal surface. A standalone copy is a
+   plain page: no SW, no caching, nothing to go stale in a client's browser. */
+if('serviceWorker' in navigator && location.protocol==='https:' &&
+   location.pathname.indexOf('/eos/')===0){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+}
+</script>
+</body>
+</html>

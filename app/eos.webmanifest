@@ -1,0 +1,14 @@
+{
+  "name": "EOS Dashboard",
+  "short_name": "EOS",
+  "description": "Leadership operating dashboard: vision plan, scorecard, quarterly priorities, and the weekly meeting.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a1228",
+  "theme_color": "#002060",
+  "icons": [
+    { "src": "eos-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "eos-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

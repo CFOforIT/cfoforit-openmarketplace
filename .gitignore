@@ -1,0 +1,16 @@
+# Never commit a user's own board data or backups.
+EOSDashboard_*.json
+EOS-Setup-*.json
+EOS-Vision-*.json
+EOS-Prep-*.json
+EOSBoard_*.html
+eos-state.json
+
+# Never commit anything resembling a private feed or profile.
+eos-feed.json
+eos-profile.json
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
