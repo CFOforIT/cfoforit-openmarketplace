@@ -1,10 +1,10 @@
 {
-  "name": "eos-dashboard",
+  "name": "cfoforit-openmarketplace",
   "owner": {
     "name": "CFOforIT"
   },
   "metadata": {
-    "description": "A free leadership operating dashboard, plus skills that help you set it up and run your weekly meeting. Independent tool, not affiliated with EOS Worldwide.",
+    "description": "CFOforIT open marketplace: free tools we build for our own firm and share with clients and anyone else who wants them. Independent of, and not affiliated with, any framework vendor.",
     "version": "1.0.0"
   },
   "plugins": [

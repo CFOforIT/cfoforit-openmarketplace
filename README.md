@@ -1,3 +1,13 @@
+# CFOforIT Open Marketplace
+
+Free tools we build to run our own firm, shared with our clients and anyone else who wants
+them. No signup, no telemetry, nothing phoning home.
+
+Currently one tool, below. More may follow; if you install the marketplace once you will get
+them without doing anything else.
+
+---
+
 # EOS Dashboard
 
 A free, self-contained dashboard for running a leadership operating cadence: your vision plan,
@@ -25,7 +35,7 @@ The dashboard works fine on its own. The plugin adds three skills that do the te
 you: configuring it, drafting your vision plan, and prepping each weekly meeting.
 
 ```
-/plugin marketplace add CFOforIT/eos-dashboard
+/plugin marketplace add CFOforIT/cfoforit-openmarketplace
 ```
 
 Then install the `eos-dashboard` plugin and say something like *"help me set up the EOS
