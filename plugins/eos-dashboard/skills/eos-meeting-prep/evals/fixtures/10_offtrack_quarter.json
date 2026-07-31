@@ -1,0 +1,8 @@
+{
+  "id": "10_offtrack_quarter",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Prep our leadership meeting for Monday. Board export is on my desktop.",
+  "expected_output": "Reads the export from disk rather than asking the user to paste it. Uses only the current quarter, determined by view.quarter and view.year. Flags offtrack and atrisk Rocks, unowned Rocks, overdue to-dos with the day count, unresolved issues by priority, and measures off goal. Leads with what changed or is at risk, not with what is fine. Ends with suggested issues ordered by what would hurt most if it slid another week, each with a reason. Keeps the whole pre-read under a page.",
+  "files": []
+}

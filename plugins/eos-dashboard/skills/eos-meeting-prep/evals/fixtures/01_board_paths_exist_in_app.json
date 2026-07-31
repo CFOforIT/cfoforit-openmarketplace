@@ -1,0 +1,22 @@
+{
+  "id": "01_board_paths_exist_in_app",
+  "type": "structural",
+  "description": "Every board path this skill reads must exist in app/index.html. A renamed key would make the skill report a clean week on a board full of problems.",
+  "assertions": [
+    {
+      "check": "app_contains",
+      "tokens": [
+        "annualGoals",
+        "quarters",
+        "rocks",
+        "todos",
+        "ids",
+        "scorecard",
+        "revenue",
+        "pipeline",
+        "sla",
+        "percent"
+      ]
+    }
+  ]
+}

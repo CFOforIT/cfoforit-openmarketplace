@@ -1,0 +1,13 @@
+{
+  "id": "04_stays_out_of_the_vision_plan",
+  "type": "structural",
+  "description": "Vision belongs to eos-vision. A setup skill that also collects a BHAG makes both skills worse and produces a rushed vision.",
+  "assertions": [
+    {
+      "check": "skill_mentions",
+      "phrases": [
+        "eos-vision"
+      ]
+    }
+  ]
+}

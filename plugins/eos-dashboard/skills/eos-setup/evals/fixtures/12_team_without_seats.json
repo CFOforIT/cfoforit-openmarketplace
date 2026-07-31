@@ -1,0 +1,8 @@
+{
+  "id": "12_team_without_seats",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Our leadership team is Dana, Marcus, Priya and Tom.",
+  "expected_output": "Accepts the list and asks once, gently, for the seat each person holds \u2014 because the seat becomes the owner label on every priority. If they decline or do not know, records blank seats and moves on rather than stalling the interview. Does not force EOS's canonical seat names onto their org.",
+  "files": []
+}

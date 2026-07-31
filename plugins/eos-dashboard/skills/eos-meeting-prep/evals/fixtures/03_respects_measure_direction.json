@@ -1,0 +1,14 @@
+{
+  "id": "03_respects_measure_direction",
+  "type": "structural",
+  "description": "A lower-is-better measure like churn or AR over 60 going UP must never be reported as good news. This is the difference between a trustworthy pre-read and a dangerous one.",
+  "assertions": [
+    {
+      "check": "skill_mentions",
+      "phrases": [
+        "direction",
+        "higher is worse"
+      ]
+    }
+  ]
+}

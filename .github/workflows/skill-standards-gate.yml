@@ -1,0 +1,50 @@
+name: skill-standards-gate
+# Enforcement of the CFOforIT Build Standards charter (v1.8) on every skill change
+# in this repository.
+#
+# Why this file exists: until 2026-07-29 this repo had no gate at all. The three
+# eos-dashboard skills had been published missing five required frontmatter fields
+# each and all three CHANGELOGs -- 18 charter errors -- and nothing had ever
+# checked. That is the same root cause as every other drift problem in this
+# codebase: a copy of the truth that nothing verifies.
+#
+# tools/validate_skills.py is a copy of the internal repo's validator. The internal
+# repo is canonical; when the charter changes there, this copy has to follow, and
+# the internal repo's public-mirror-drift job is what tells you it has fallen
+# behind.
+#
+# Deliberately NOT copied from the internal workflow: the ADR-009 wall-flip
+# trigger. It names an internal decision log and an individual's account, neither
+# of which belongs in a public repository.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate all skills against Build Standards charter v1.8
+        run: python3 tools/validate_skills.py
+
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run every skill's structural evals
+        # The structural checks assert that the field paths and status values each
+        # SKILL.md documents still exist in app/index.html. Editing the app without
+        # editing the skills is the failure this catches: a skill that reads a
+        # renamed key reports a clean week on a board full of problems.
+        run: |
+          set -e
+          for r in plugins/*/skills/*/evals/runner.py; do
+            echo "--- $r"
+            python3 "$r"
+          done

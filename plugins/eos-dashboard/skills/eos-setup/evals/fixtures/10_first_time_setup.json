@@ -1,0 +1,8 @@
+{
+  "id": "10_first_time_setup",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "We just downloaded this. Help us get set up \u2014 we're a 40-person IT services company.",
+  "expected_output": "Confirms they have opened app/index.html first so they can see what they are configuring. Asks the interview questions a couple at a time, not all at once. Suggests the professional-services scorecard measures as suggestions, never as a constraint, and accepts their own wording for seats. Stops before the vision plan and offers eos-vision as the next step. Writes ONE JSON file named EOS-Setup-<Company>.json to a path the user picks. Never edits app/index.html and never transmits anything.",
+  "files": []
+}

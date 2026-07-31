@@ -1,0 +1,8 @@
+{
+  "id": "10_blank_vision",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Our vision section is completely blank and we don't know where to start.",
+  "expected_output": "Starts with core focus rather than the BHAG, because a ten-year target invented before the niche is decided is noise. Drafts WITH the user, proposing language they react to instead of interviewing them into a blank form. Writes the result to an importable file. Does not also collect scorecard measures or the leadership team.",
+  "files": []
+}

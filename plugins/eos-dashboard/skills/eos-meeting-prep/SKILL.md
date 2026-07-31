@@ -1,6 +1,13 @@
 ---
 name: eos-meeting-prep
 description: Prepare a weekly leadership meeting from an exported dashboard board file. Reads the board, flags what is off track, overdue, or unowned, and drafts the issues list and headlines for discussion. Use when someone asks to prep the weekly meeting, get ready for the leadership meeting, review the board before the meeting, or asks what needs attention this week.
+version: 1.0.0
+autonomy_tier: draft-for-review
+blast_radius: private
+model_tier: sonnet
+model_tier_rationale: "Reading an exported board, applying stated thresholds (off track, overdue, unowned, off goal), and ordering the result. Mechanical against explicit rules, not open-ended judgment."
+expected_token_budget: "10K-30K per invocation — depends on board size; the export is read once, never pasted."
+trust_level: external
 ---
 
 # Prepare the weekly meeting

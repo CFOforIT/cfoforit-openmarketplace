@@ -1,0 +1,13 @@
+{
+  "id": "03_stays_out_of_setup_territory",
+  "type": "structural",
+  "description": "Collecting the leadership team and scorecard measures is eos-setup's job. Doing both here produces a long interview and a worse result at each end.",
+  "assertions": [
+    {
+      "check": "skill_mentions",
+      "phrases": [
+        "eos-setup"
+      ]
+    }
+  ]
+}

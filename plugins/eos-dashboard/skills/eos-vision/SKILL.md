@@ -1,9 +1,30 @@
 ---
 name: eos-vision
 description: Help a leadership team draft or sharpen their vision plan (core focus, core values, BHAG and long-range target, three-year picture, one-year plan, marketing strategy), then write it into a file they import. Use when someone wants help with vision, mission, purpose, niche, values, BHAG, ten-year target, three-year picture, one-year plan, uniques, proven process, or says the vision section is blank and they do not know where to start.
+version: 1.0.0
+autonomy_tier: draft-for-review
+blast_radius: private
+model_tier: opus
+model_tier_rationale: "Drafting a core focus, BHAG, three-year picture and one-year plan is strategy writing, the same judgment class as this firm's other opus-tier narrative work. A weak vision draft is worse than a blank page because a team will edit rather than rethink it."
+expected_token_budget: "15K-40K per invocation — several drafting rounds with the user, no large file reads."
+trust_level: external
 ---
 
 # Draft the vision plan
+
+## Where this sits
+
+This skill drafts the **vision plan** only — core focus, core values, BHAG and long-range
+target, three-year picture, one-year plan, marketing strategy.
+
+It does **not** collect the leadership team, scorecard measures, or the meeting schedule. That
+is `eos-setup`, and splitting them is deliberate: a single interview long enough to cover both
+produces a rushed vision, which is the one part of this that is worth doing slowly. If the
+dashboard has not been configured at all yet, say so and offer `eos-setup` first — the vision
+plan imports into a dashboard, so there needs to be one.
+
+Once the vision is drafted, `eos-meeting-prep` is what turns the resulting board into a weekly
+pre-read.
 
 The most common way this dashboard fails is a leadership team opening the Vision section,
 seeing eight empty fields, and closing the tab. Your job is to get real words into those

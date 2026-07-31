@@ -1,0 +1,13 @@
+{
+  "id": "06_attribution_and_audience_refusals",
+  "type": "structural",
+  "description": "prepared_by defaults to CFOforIT, so an unset value puts a false attribution on someone else's deal document. And audience='target' must raise rather than quietly falling back to a safer build.",
+  "assertions": [
+    {
+      "check": "prepared_by_is_honoured"
+    },
+    {
+      "check": "target_audience_refused"
+    }
+  ]
+}

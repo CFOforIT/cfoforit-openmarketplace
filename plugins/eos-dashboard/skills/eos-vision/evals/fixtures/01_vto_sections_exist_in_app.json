@@ -1,0 +1,19 @@
+{
+  "id": "01_vto_sections_exist_in_app",
+  "type": "structural",
+  "description": "The vision sections this skill drafts must be the ones the dashboard stores, or the draft cannot be imported into the right places.",
+  "assertions": [
+    {
+      "check": "app_contains",
+      "tokens": [
+        "vto",
+        "coreFocus",
+        "bhag",
+        "oneYear",
+        "marketing",
+        "niche",
+        "purpose"
+      ]
+    }
+  ]
+}

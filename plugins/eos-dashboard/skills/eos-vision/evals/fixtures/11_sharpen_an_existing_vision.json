@@ -1,0 +1,8 @@
+{
+  "id": "11_sharpen_an_existing_vision",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Here's our current vision plan. It feels generic. Sharpen it.",
+  "expected_output": "Reads what they have and names specifically what is generic \u2014 a value that no competitor would disclaim, a three-year picture with no number in it \u2014 rather than rewriting wholesale. Preserves anything that is already sharp. Explains each change so the team can push back.",
+  "files": []
+}

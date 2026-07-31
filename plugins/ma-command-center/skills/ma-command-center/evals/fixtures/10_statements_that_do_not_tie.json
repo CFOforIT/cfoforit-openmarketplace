@@ -1,0 +1,8 @@
+{
+  "id": "10_statements_that_do_not_tie",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Here are the target's statements. Do they tie out?",
+  "expected_output": "Runs ma_engine.validate rather than eyeballing the numbers. Reports report.status verbatim, names each blocking failure with its delta, and shows report.flags as well \u2014 a flag nobody sees is the same as no check. Does not soften a failure into 'mostly ties' and does not suggest a plausible figure for anything missing.",
+  "files": []
+}

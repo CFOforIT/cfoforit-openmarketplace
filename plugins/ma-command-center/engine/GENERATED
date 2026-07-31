@@ -1,0 +1,6 @@
+Everything in this directory is generated from CFOforIT's internal
+repository by plugins/cfoforit-ma/tools/sync_public.py.
+
+Do not edit it here -- the next sync overwrites your change, and a drift
+check upstream fails the build until it matches again. Send fixes as an
+issue instead.

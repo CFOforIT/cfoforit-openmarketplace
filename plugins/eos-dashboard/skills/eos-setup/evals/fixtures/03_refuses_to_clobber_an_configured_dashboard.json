@@ -1,0 +1,14 @@
+{
+  "id": "03_refuses_to_clobber_an_configured_dashboard",
+  "type": "structural",
+  "description": "Re-running setup against a live dashboard would overwrite real work. The skill must send the user to the in-app Setup button instead, and must say so in the body.",
+  "assertions": [
+    {
+      "check": "skill_mentions",
+      "phrases": [
+        "do NOT use this skill",
+        "Setup"
+      ]
+    }
+  ]
+}

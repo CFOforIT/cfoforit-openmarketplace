@@ -1,0 +1,10 @@
+{
+  "id": "02_hard_stop_actually_stops",
+  "type": "structural",
+  "description": "hard_stop=True must raise. Returning a failing report to a caller who may ignore it defeats the point of a gate.",
+  "assertions": [
+    {
+      "check": "hard_stop_raises"
+    }
+  ]
+}

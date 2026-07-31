@@ -1,0 +1,8 @@
+{
+  "id": "12_render_for_the_buyer",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Render the command center for our own team.",
+  "expected_output": "Sets prepared_by to the caller's organisation, not the default. Uses audience='client' for the acquirer. Writes one page per target and says so if asked for a combined view, because every figure is inlined and one file covering three targets carries all three sets of pricing.",
+  "files": []
+}

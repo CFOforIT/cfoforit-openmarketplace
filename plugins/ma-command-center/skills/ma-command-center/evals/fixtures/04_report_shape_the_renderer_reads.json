@@ -1,0 +1,10 @@
+{
+  "id": "04_report_shape_the_renderer_reads",
+  "type": "structural",
+  "description": "The renderer reads status, checks and flags off the snapshot block. If that shape drifts, the validation page renders an empty table and nobody notices the gate stopped reporting.",
+  "assertions": [
+    {
+      "check": "snapshot_block_shape"
+    }
+  ]
+}

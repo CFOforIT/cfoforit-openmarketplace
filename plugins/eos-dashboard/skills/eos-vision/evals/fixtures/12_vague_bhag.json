@@ -1,0 +1,8 @@
+{
+  "id": "12_vague_bhag",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Our BHAG is 'be the best IT provider in the region'.",
+  "expected_output": "Pushes back, once and concretely: that is not measurable, has no date, and no one could tell whether it had been achieved. Offers two or three alternatives that keep the ambition but attach a number and a year. Accepts their choice; does not insist.",
+  "files": []
+}

@@ -1,0 +1,16 @@
+{
+  "id": "07_no_methodology_ships",
+  "type": "structural",
+  "description": "This plugin is the engine. If a diligence library, workplan or rubric ever appears in it, the separation that allows it to be public has broken \u2014 and it would have broken silently.",
+  "assertions": [
+    {
+      "check": "no_reference_library_shipped",
+      "forbidden_files": [
+        "diligence-library.json",
+        "diligence-workplan-library.json",
+        "integration-template.json",
+        "strategic-fit-rubric.json"
+      ]
+    }
+  ]
+}
