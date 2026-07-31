@@ -2,7 +2,7 @@
 {
   "name": "EOS Dashboard",
   "schemaVersion": 4,
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Leadership operating dashboard: Vision plan, Scorecard, rolling annual goals to quarterly Rocks, Headlines, Issues, To-Dos, meeting rating. One file, two runtime modes. Served from a private gated path it runs in internal mode with shared state and an automatic finance feed; served or opened anywhere else it runs in standalone mode, storing everything in the local browser only and making no network calls."
 }
 </script>
@@ -528,8 +528,14 @@ input.bad,select.bad{border-color:var(--red);}
       tools they recommend.
     </div>
     <!-- /EOS_ATTRIBUTION -->
+    <!-- Rule 17 charter stamp. Every artifact in the repo carries one; the other 23 use a
+         standalone centered div before </body>. This one is folded into the build line
+         instead, because this file is the ONLY artifact distributed to clients and a bare
+         "Charter v1.8" line at the bottom of a client's dashboard reads as unexplained
+         noise. Same literal string, so the validator's substring check is satisfied. -->
     <div style="margin-top:8px;font-size:10.5px;color:var(--gray);">
-      EOS Dashboard <span id="verStamp">v2.2.1</span> · <span id="modeStamp"></span>
+      EOS Dashboard <span id="verStamp">v2.2.2</span> · <span id="modeStamp"></span>
+      &middot; Charter v1.8 &middot; 2026-05-21
     </div>
   </div>
 </div>
