@@ -1,0 +1,10 @@
+{
+  "id": "02_schema_agrees_with_app",
+  "type": "structural",
+  "description": "Same schema-drift risk as setup: the file this skill writes is imported by the app.",
+  "assertions": [
+    {
+      "check": "schema_version_agrees"
+    }
+  ]
+}

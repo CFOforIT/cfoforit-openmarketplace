@@ -1,0 +1,8 @@
+{
+  "id": "11_already_configured",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "We've been using the dashboard for two months but want to change our scorecard measures.",
+  "expected_output": "Does NOT run setup. Tells them to click Setup in the dashboard's top bar and edit directly, because regenerating a starter file would overwrite two months of real work. This refusal is the correct answer, not a limitation to apologise for.",
+  "files": []
+}

@@ -1,0 +1,15 @@
+{
+  "id": "02_status_values_match_the_app",
+  "type": "structural",
+  "description": "The skill flags Rocks by status string. If the app's values change, nothing gets flagged and the pre-read looks reassuring.",
+  "assertions": [
+    {
+      "check": "app_contains",
+      "tokens": [
+        "offtrack",
+        "atrisk",
+        "direction"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "05_rendered_page_is_self_contained",
+  "type": "structural",
+  "description": "A deal page has to open offline, from an email attachment, years later. Any external reference \u2014 a CDN script, a webfont, an image \u2014 breaks that and leaks that the page was opened.",
+  "assertions": [
+    {
+      "check": "render_is_self_contained"
+    }
+  ]
+}

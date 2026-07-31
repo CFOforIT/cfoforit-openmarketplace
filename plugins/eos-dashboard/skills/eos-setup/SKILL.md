@@ -1,6 +1,13 @@
 ---
 name: eos-setup
 description: Configure the EOS Dashboard for a company by interviewing the user, then writing a starter file they import. Use when someone says they want to set up the dashboard, get started, add their leadership team, pick scorecard measures, or when they have just downloaded this plugin and do not know what to do next.
+version: 1.0.0
+autonomy_tier: draft-for-review
+blast_radius: private
+model_tier: sonnet
+model_tier_rationale: "A structured interview plus writing a JSON starter file. Shape is fixed and the judgment is the user's, not the model's."
+expected_token_budget: "5K-15K per invocation — one interview pass and one file write; reads no large inputs."
+trust_level: external
 ---
 
 # Set up the EOS Dashboard

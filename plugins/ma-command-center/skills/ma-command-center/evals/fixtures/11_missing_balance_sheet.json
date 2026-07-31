@@ -1,0 +1,8 @@
+{
+  "id": "11_missing_balance_sheet",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "I only have the P&L. Run the gate.",
+  "expected_output": "Reports the balance-sheet, cash and retained-earnings checks as FAILED with 'could not run', not as skipped, not as N/A, and not as passing. States plainly that the gate cannot confirm these statements tie out and that no figure from them should be relied on yet. Does not offer to infer a balance sheet.",
+  "files": []
+}

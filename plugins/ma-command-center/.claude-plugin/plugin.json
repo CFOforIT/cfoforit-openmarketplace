@@ -1,0 +1,5 @@
+{
+  "name": "ma-command-center",
+  "description": "The engine behind an M&A command center: render a self-contained, tabbed HTML deal page from your own JSON, and run an executable financial tie-out gate over the target's statements before you trust a number. Bring your own diligence checklist — this ships the machinery, not a methodology.",
+  "author": { "name": "CFOforIT", "email": "steve.torres@cfoforit.com" }
+}

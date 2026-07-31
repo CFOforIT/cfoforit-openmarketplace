@@ -11,6 +11,10 @@
     {
       "name": "eos-dashboard",
       "source": "./plugins/eos-dashboard"
+    },
+    {
+      "name": "ma-command-center",
+      "source": "./plugins/ma-command-center"
     }
   ]
 }

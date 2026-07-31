@@ -1,0 +1,13 @@
+{
+  "id": "04_never_manufactures_a_win",
+  "type": "structural",
+  "description": "A fabricated headline teaches the team to discount the whole pre-read. The skill must say plainly when there are no genuine wins.",
+  "assertions": [
+    {
+      "check": "skill_mentions",
+      "phrases": [
+        "rather than manufacturing"
+      ]
+    }
+  ]
+}

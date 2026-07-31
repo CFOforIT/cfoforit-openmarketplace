@@ -1,0 +1,10 @@
+{
+  "id": "01_schema_agrees_with_app",
+  "type": "structural",
+  "description": "The starter file this skill writes must declare the schema version the dashboard actually reads. If the app moves to schema 5 and this skill keeps writing 4, every import silently lands wrong.",
+  "assertions": [
+    {
+      "check": "schema_version_agrees"
+    }
+  ]
+}

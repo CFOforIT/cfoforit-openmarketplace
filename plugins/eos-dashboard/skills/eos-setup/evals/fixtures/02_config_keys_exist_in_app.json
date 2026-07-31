@@ -1,0 +1,17 @@
+{
+  "id": "02_config_keys_exist_in_app",
+  "type": "structural",
+  "description": "Every config key the skill writes has to exist in app/index.html, or the import is accepted and then ignored.",
+  "assertions": [
+    {
+      "check": "app_contains",
+      "tokens": [
+        "setupComplete",
+        "fyStartMonth",
+        "durationMin",
+        "scorecard",
+        "vto"
+      ]
+    }
+  ]
+}

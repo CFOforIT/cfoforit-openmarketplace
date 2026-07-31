@@ -1,0 +1,8 @@
+{
+  "id": "11_no_genuine_wins",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Prep the meeting. It's been a rough quarter.",
+  "expected_output": "Says plainly that there are no genuine wins to point to rather than manufacturing a headline out of a metric that technically moved. This is the behaviour that keeps the pre-read trustworthy; a fabricated win teaches the team to discount everything else in it.",
+  "files": []
+}

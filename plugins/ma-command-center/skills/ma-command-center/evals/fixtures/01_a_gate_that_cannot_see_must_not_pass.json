@@ -1,0 +1,13 @@
+{
+  "id": "01_a_gate_that_cannot_see_must_not_pass",
+  "type": "structural",
+  "description": "The single most important property of this plugin. Feed the gate a file with nothing in it: every blocking check must FAIL, and each must say it could not run. A gate that returns PASS when it never looked is worse than no gate, because someone prices a deal off it.",
+  "assertions": [
+    {
+      "check": "empty_input_fails_every_check"
+    },
+    {
+      "check": "unrunnable_says_so"
+    }
+  ]
+}

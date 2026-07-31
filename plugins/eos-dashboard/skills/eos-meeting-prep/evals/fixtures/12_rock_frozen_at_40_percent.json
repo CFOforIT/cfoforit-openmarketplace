@@ -1,0 +1,8 @@
+{
+  "id": "12_rock_frozen_at_40_percent",
+  "type": "conversational",
+  "status": "pending",
+  "prompt": "Here are this week's and last week's exports. Prep the meeting.",
+  "expected_output": "Compares the two and flags any Rock whose percent has not moved, calling that out as the real signal even though its status may still read ontrack. A Rock frozen at 40 percent for three weeks is a problem the status field does not show.",
+  "files": []
+}
