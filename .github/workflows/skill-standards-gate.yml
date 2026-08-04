@@ -1,21 +1,34 @@
 name: skill-standards-gate
-# Enforcement of the CFOforIT Build Standards charter (v1.8) on every skill change
-# in this repository.
+# Enforcement of the CFOforIT Build Standards charter (v1.8) for this repository.
 #
-# Why this file exists: until 2026-07-29 this repo had no gate at all. The three
-# eos-dashboard skills had been published missing five required frontmatter fields
-# each and all three CHANGELOGs -- 18 charter errors -- and nothing had ever
-# checked. That is the same root cause as every other drift problem in this
-# codebase: a copy of the truth that nothing verifies.
+# Why a gate exists here at all: until 2026-07-29 this repo had none. The three
+# eos-dashboard skills had been published missing five required frontmatter fields each and
+# all three CHANGELOGs -- 18 charter errors -- and nothing had ever checked. That is the
+# same root cause as every other drift problem in this codebase: a copy of the truth that
+# nothing verifies.
 #
-# tools/validate_skills.py is a copy of the internal repo's validator. The internal
-# repo is canonical; when the charter changes there, this copy has to follow, and
-# the internal repo's public-mirror-drift job is what tells you it has fallen
-# behind.
+# WHERE THE CHARTER CHECKS LIVE NOW (changed 2026-08-04). This repo used to carry
+# tools/validate_skills.py, a hand-maintained copy of the internal repo's validator. It had
+# already drifted: it was missing the Rule 14 check and the whole-tree walk, so it enforced
+# charter v1.8 minus two rules while reporting clean. The copy is deleted. There is one
+# implementation, in the canonical private repo (cfoforit-claude-plugins,
+# tools/standards/), and charter validation of THIS repo now runs from there -- the
+# `public-marketplace-standards` job in that repo checks this one out (public, so no token
+# is needed) and runs the canonical checks against it.
 #
-# Deliberately NOT copied from the internal workflow: the ADR-009 wall-flip
-# trigger. It names an internal decision log and an individual's account, neither
-# of which belongs in a public repository.
+# Why not call the shared reusable workflow directly from here, which would gate this repo's
+# own pull requests? Because that call needs a PAT with read access to the private canonical
+# repo, which holds the client registry, the client-delivery skills and the financial
+# engines. Storing that key in a PUBLIC repository's secrets is a confidentiality boundary
+# not worth crossing for CI convenience. The trade is stated plainly rather than hidden:
+#
+#   KNOWN GAP -- a pull request opened directly against this repo runs the evals job below
+#   but NOT charter validation. That happens upstream once the change reaches main. If
+#   PR-time charter validation here becomes worth the token, that is a deliberate decision
+#   to make, not a default to drift into.
+#
+# Also deliberately NOT here: the ADR-009 wall-flip trigger. It names an internal decision
+# log and an individual's account, neither of which belongs in a public repository.
 
 permissions:
   contents: read
@@ -31,14 +44,6 @@ on:
     branches: [main]
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Validate all skills against Build Standards charter v1.8
-        run: python3 tools/validate_skills.py
-
   evals:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -49,6 +54,9 @@ jobs:
         # SKILL.md documents still exist in app/index.html. Editing the app without
         # editing the skills is the failure this catches: a skill that reads a
         # renamed key reports a clean week on a board full of problems.
+        #
+        # These are native to this repo (they check THIS repo's app/index.html), so unlike
+        # the charter checks they are not shared and they belong here.
         run: |
           set -e
           for r in plugins/*/skills/*/evals/runner.py; do
