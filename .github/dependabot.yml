@@ -1,0 +1,14 @@
+# github-actions only: the Python here (validators, eval runners, generated engine)
+# ships no dependency manifest, so a pip entry would have nothing to scan.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    labels: ["dependencies", "github-actions"]
+    reviewers: ["Storres1970"]

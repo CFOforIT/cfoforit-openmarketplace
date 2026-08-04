@@ -1,0 +1,6 @@
+# Public marketplace. All changes require owner review.
+# plugins/*/engine/ is GENERATED from the private cfoforit-claude-plugins repo and
+# must never be hand-edited here -- the mirror-drift check in that repo rejects it.
+*                                              @Storres1970
+/.github/                                      @Storres1970
+/tools/                                        @Storres1970
