@@ -17,6 +17,13 @@ name: skill-standards-gate
 # trigger. It names an internal decision log and an individual's account, neither
 # of which belongs in a public repository.
 
+permissions:
+  contents: read
+
+concurrency:
+  group: skill-standards-gate-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 on:
   push:
     branches: [main]
@@ -28,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Validate all skills against Build Standards charter v1.8
         run: python3 tools/validate_skills.py
 
@@ -36,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Run every skill's structural evals
         # The structural checks assert that the field paths and status values each
         # SKILL.md documents still exist in app/index.html. Editing the app without
