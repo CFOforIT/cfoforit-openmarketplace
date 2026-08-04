@@ -41,6 +41,16 @@ you: configuring it, drafting your vision plan, and prepping each weekly meeting
 Then install the `eos-dashboard` plugin and say something like *"help me set up the EOS
 dashboard"*.
 
+**Pinning to a release.** The command above tracks `main`, which moves. Releases are tagged,
+so if you would rather pin to a fixed version — and be able to roll back to it — use the tag:
+
+```
+/plugin marketplace add CFOforIT/cfoforit-openmarketplace@v1.0.0
+```
+
+The current release is [`v1.0.0`](https://github.com/CFOforIT/cfoforit-openmarketplace/releases/tag/v1.0.0).
+See [CHANGELOG.md](CHANGELOG.md) for what changed in each one.
+
 | Skill | What it does |
 |---|---|
 | `eos-setup` | Interviews you about your company, leadership team, seats, scorecard measures, and meeting cadence, then writes a starter file you import. Saves about twenty minutes of typing. |
