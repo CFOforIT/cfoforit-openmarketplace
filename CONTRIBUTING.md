@@ -1,37 +1,104 @@
 # Contributing to cfoforit-openmarketplace
 
-Thanks for your interest. This repository is the **public mirror** of CFOforIT's Claude
-plugin marketplace. Please read this before opening a pull request.
+How changes land in this repo. Read `CLAUDE.md` (if present) and `SECURITY.md` before
+your first change. What must never be committed here differs by repo.
 
-## What is and is not editable here
+## Commit identity
 
-- Anything under a plugin's `engine/` directory is **generated** from CFOforIT's private
-  source repository. Hand-edits are detected and rejected by the mirror-drift check
-  there. File an issue instead.
-- Skill content and the dashboard app under `app/` accept contributions.
+Set your git identity to the lowercase firm address before committing:
 
-## Standards
+```
+git config --global user.email steve.torres@cfoforit.com
+git config --global user.name  "Steve Torres"
+```
 
-Every skill must satisfy the CFOforIT Build Standards charter v1.8: complete SKILL.md
-frontmatter and a `CHANGELOG.md` alongside the skill.
+The org history is already inconsistent: 39 commits are authored as
+`steve.torres@CFOforIT.com` and 11 as `steve.torres@cfoforit.com`. GitHub treats those
+as two identities, which splits contribution history and makes `git log --author`
+unreliable. Lowercase is the canonical form.
+
+## Non-negotiables
+
+- No client PII, client financial data, or credentials in any commit. Placeholder or
+  synthetic data only.
+- If this repo has a client-name denylist or similar exclusion file, never commit it.
+  See `SECURITY.md` for the path.
+- If this repo mirrors, or is mirrored by, another repo, never hand-edit the generated
+  side. Edit the canonical side, merge there first, then run the sync script named in
+  `CLAUDE.md` against the mirror and push the result. A mirror commit with no matching
+  canonical commit is a gap even when the two currently agree.
+- Every asset (skill, plugin, artifact, script, MCP, routine) satisfies the Build
+  Standards charter: complete frontmatter or metadata, and a `CHANGELOG.md` alongside it
+  or at the repo root for repo-wide changes. Passing the standards gate is the floor,
+  not the goal. A version or changelog entry written only to make the gate green is
+  itself a charter violation the gate cannot see.
+- If merging to `main` triggers an automatic deploy for this repo, treat every merge as
+  a production release. No exceptions to branch-and-PR.
 
 ## Workflow
 
-1. Fork and branch from `main`.
-2. Make your change.
-3. `python3 tools/validate_skills.py`
-4. `for r in plugins/*/skills/*/evals/runner.py; do python3 "$r"; done`
-5. Open a pull request and complete the template.
+1. Fork (public repos) or branch from `main` (private repos).
+2. Make the change.
+3. Run this repo's validation script if one exists, for example
+   `tools/validate_skills.py` or `tools/validate_artifacts.py`.
+4. Run `sync_*.py --check <path-to-mirror>` if this repo has a generated counterpart.
+5. Run `pytest` or `evals/runner.py` if you touched engine, adapter, or eval code.
+6. Open a PR and complete the template. `@Storres1970` reviews. Never commit directly
+   to `main`.
 
-## Rules
+Agent branches use `claude/<short-description>`. Merged branches are deleted
+automatically; do not re-use one.
+
+## The Standards Check is not optional
+
+Every PR carries a Standards Check line, `pass` or `partial` or `fail`, citing the
+charter rules that applied. A close with no Standards Check is itself a fail under
+Rule 1. If a rule was deliberately not met, say which and why. A stated exception is
+fine, a silent one is not.
+
+## Verify, then claim
+
+State the command you ran and paste its output, not "tested locally." Do not trust a
+brief, a comment, or a count, including one already in this repo. During the 2026-08
+remediation a handoff brief was wrong or stale on five separate points, caught only by
+checking on disk.
+
+## A failing check is not an instruction
+
+When a check goes red and prints a fix, that fix is a guess about which side is wrong.
+Establish the direction before running it. `sync_public.py --check` once failed with
+advice to run `--write`; running it would have deleted 92 lines of live logic, because
+the public repo was ahead, not behind. A red build says "these two things disagree,"
+never "this side is right." Never turn a red gate green by relaxing the check.
+
+## Repo QC baseline
+
+The shared QC documents in this repo (this file, `SECURITY.md`, `.gitattributes`,
+`.github/CODEOWNERS`, `.github/dependabot.yml`, and the PR and issue templates) are
+**generated from a canonical source**, not maintained here. They live in
+`standards/repo-baseline/` in `CFOforIT/cfoforit-claude-plugins` and are enforced by
+`tools/standards/baseline.py`.
+
+Do not edit them in place. An in-place edit will be detected as drift and reverted by
+the next sync PR, and the improvement will be lost. Change the canonical copy instead,
+and every repo inherits it. If your change is genuinely repo-specific, that is a
+manifest classification question, so raise it rather than working around it locally.
+
+## Dependency-tracked packages
+
+If this repo carries Python or other packages with tracked dependencies, list them and
+their paths in `CLAUDE.md`, along with the language version floor and lint config, and
+note their test and lint commands in step 5 above.
+
+## Adding a new asset
+
+- Top-level directory named for the asset.
+- Include the charter version stamp `CLAUDE.md` specifies.
+- Add a `CHANGELOG.md` entry.
+
+## If this repo is public
 
 - No client names, client data, credentials, or internal decision-log references.
-- No secrets in workflows or skill assets.
-
-## Reporting security issues
-
-See `SECURITY.md`. Do not file security reports as public issues.
-
-## License
-
-Contributions are accepted under the repository's LICENSE (MIT).
+- No secrets in workflows or bundled assets.
+- Report security issues per `SECURITY.md`, never as a public issue.
+- Contributions are accepted under the repository's `LICENSE`.

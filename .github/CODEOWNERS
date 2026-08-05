@@ -1,6 +1,15 @@
-# Public marketplace. All changes require owner review.
-# plugins/*/engine/ is GENERATED from the private cfoforit-claude-plugins repo and
-# must never be hand-edited here -- the mirror-drift check in that repo rejects it.
-*                                              @Storres1970
-/.github/                                      @Storres1970
-/tools/                                        @Storres1970
+# Every path in this repo requires review from the owner below.
+#
+# Canonical: standards/repo-baseline/files/.github/CODEOWNERS in
+# cfoforit-claude-plugins. Do not edit in place.
+#
+# This file is `templated`, not `exact`: /tools/
+/plugins/ is substituted per repo with
+# that repo's own top-level directories. The OWNER is asserted separately by the
+# manifest's `owner_must_be`, so a well-formed file that names the wrong approver is a
+# distinct and higher-severity finding than a formatting difference.
+
+*                       @Storres1970
+/.github/               @Storres1970
+/tools/
+/plugins/
