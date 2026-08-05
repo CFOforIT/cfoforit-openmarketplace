@@ -19,15 +19,31 @@ choose. Nobody else can see it, including us.
 
 ---
 
+## Get it
+
+**Open it online — nothing to install:**
+https://cfoforit.github.io/cfoforit-openmarketplace/
+
+Bookmark that and you are done. It is the same single file, served from GitHub; your data still
+stays in your own browser.
+
+**Or keep your own copy:**
+[Download the ZIP](https://github.com/CFOforIT/cfoforit-openmarketplace/archive/refs/heads/main.zip),
+unzip it, and open **`app/index.html`** in Chrome or Edge. Works offline, forever, with no
+dependency on us.
+
+Either way, answer five setup questions and you are running.
+
+---
+
 ## Two ways to use this
 
 ### 1. Just open it (no Claude needed)
 
-Download this repository, then open **`app/index.html`** in Chrome or Edge. That is the whole
-install. Answer five setup questions and you are running.
+Use either link above. That is the whole install.
 
-Prefer a link you can bookmark? Host `app/` on any static host you already have. It needs no
-backend.
+Want it on your own domain instead? Host the `app/` folder on any static host you already have.
+It needs no backend.
 
 ### 2. Add the Claude plugin (recommended if you use Claude Code or Cowork)
 
@@ -41,15 +57,15 @@ you: configuring it, drafting your vision plan, and prepping each weekly meeting
 Then install the `eos-dashboard` plugin and say something like *"help me set up the EOS
 dashboard"*.
 
-**Pinning to a release.** The command above tracks `main`, which moves. Releases are tagged,
-so if you would rather pin to a fixed version — and be able to roll back to it — use the tag:
+**Pinning to a version.** The command above tracks `main`, which moves. Once a version is
+tagged you can pin to it — and roll back to it — by naming the tag:
 
 ```
-/plugin marketplace add CFOforIT/cfoforit-openmarketplace@v1.0.0
+/plugin marketplace add CFOforIT/cfoforit-openmarketplace@<tag>
 ```
 
-The current release is [`v1.0.0`](https://github.com/CFOforIT/cfoforit-openmarketplace/releases/tag/v1.0.0).
-See [CHANGELOG.md](CHANGELOG.md) for what changed in each one.
+See [tags](https://github.com/CFOforIT/cfoforit-openmarketplace/tags) for what is available and
+[CHANGELOG.md](CHANGELOG.md) for what changed in each one.
 
 | Skill | What it does |
 |---|---|
