@@ -25,6 +25,13 @@ seller legitimately may not have produced the supporting schedule yet: customer
 detail coverage, AR aging to gross AR, unresolved customer name variants, and
 add-backs with no evidence behind them.
 
+And one non-blocking check whose rationale is different, because it is the only
+one here that reads the counterparty's own arithmetic rather than ours: the
+target's STATED balance-sheet totals against the line items they claim to total
+(section A0). Every other tie-out derives all three sides from `lines`, so it
+compares our reconstruction against itself and cannot see a printed total that
+does not foot. Non-blocking is a ruling, not an oversight -- see A0.
+
 Fail-loud rule: a blocking failure raises MAError. It does NOT return a report
 the caller might render as a pass. The caller that wants the report anyway
 (to show the client exactly what broke) passes hard_stop=False and reads
@@ -39,6 +46,16 @@ from . import MAError
 
 SUBTOTAL_TOLERANCE = 1.00   # dollars, on subtotals only
 ZERO_TOLERANCE = 0.005      # effectively exact (sub-cent)
+
+# Which `stated_totals` key answers to which `lines[].section` value. Keyed by
+# section rather than by the seller's label text on purpose: one target prints
+# "TOTAL ASSETS", the next "Total assets", the next "Assets, total". Matching
+# label strings would make the check a spelling lottery.
+_STATED_SECTIONS = (
+    ("asset", "assets"),
+    ("liability", "liabilities"),
+    ("equity", "equity"),
+)
 
 
 @dataclass
@@ -143,6 +160,90 @@ def validate(detail: dict, *, hard_stop: bool = True) -> CheckReport:
     bs_lines = bs.get("lines") or []
     bs_dates = bs.get("dates") or []
     cf_detail = cf.get("periods_detail") or {}
+
+    # --- A0. The target's stated totals foot to their own line items ---------
+    #
+    # Runs BEFORE the A = L + E check below, and it is the only check in this
+    # file that reads a number the TARGET printed rather than one we computed.
+    #
+    # Every other tie-out here derives all three sides from `lines` and compares
+    # our arithmetic against itself. That is the right shape for MHR, which
+    # reads our own client's ledger tied to a trial balance at Gate 1 -- there
+    # the ledger IS the source, so no adversarial printed figure exists. This
+    # gate reads a document supplied by the counterparty in a purchase
+    # negotiation, and a stated total that does not foot to its own line items
+    # is exactly where a misstatement lives. Without this check, a target
+    # printing 5,000,000 over asset lines summing to 4,700,000 passes every
+    # tie-out: we substitute our 4,700,000 for their 5,000,000 and then verify
+    # ours against ours. The gap arrived with the mirroring (Decision #16), not
+    # from anything done wrong -- a check built for trusted, self-produced data
+    # was carried into a context where the document is untrusted.
+    #
+    # NON-BLOCKING by ruling (Steve, 2026-08-11). A mismatch is surfaced on the
+    # validation page; it does not stop the write to financials-detail.json.
+    # Early-stage screening runs on scrappy documents and a rounding artifact in
+    # a seller's PDF should not halt a deal review. It lands in `report.flags`,
+    # so it is visible -- a silent advisory is the same as no check at all.
+    #
+    # Absence is a non-blocking FAILURE, never a pass. `stated_totals` is a new
+    # capture, so files built before it do not carry one; blocking on absence
+    # would convert the ruling above into a hard stop on every historical file.
+    # It is recorded as "could not run" and appears in flags.
+    stated = bs.get("stated_totals") or {}
+    if not bs_lines or not bs_dates:
+        _missing(rep, "Stated totals foot to their own line items",
+                 "stated-tie",
+                 "no balance-sheet lines or dates in statements.balance_sheet",
+                 blocking=False)
+    elif not stated:
+        _missing(rep, "Stated totals foot to their own line items",
+                 "stated-tie",
+                 "no statements.balance_sheet.stated_totals: the target's "
+                 "printed totals were not captured at ingest, so they cannot "
+                 "be compared against the line items they claim to total",
+                 blocking=False)
+    else:
+        for d in bs_dates:
+            per_date = stated.get(d) or {}
+            if not per_date:
+                _missing(rep,
+                         f"Stated totals foot to their own line items ({d})",
+                         "stated-tie",
+                         f"no stated totals captured for {d}", blocking=False)
+                continue
+            for section, key in _STATED_SECTIONS:
+                s = _scalar(per_date.get(key))
+                derived = _sum_lines([l for l in bs_lines
+                                      if l.get("section") == section], d)
+                if s is None:
+                    _missing(rep, f"Stated {key} foots to its own lines ({d})",
+                             "stated-tie",
+                             f"stated_totals[{d!r}] carries no {key!r}",
+                             blocking=False)
+                    continue
+                _tie(rep, f"Stated {key} foots to its own lines ({d})",
+                     "stated-tie", s, derived, tol=SUBTOTAL_TOLERANCE,
+                     blocking=False,
+                     detail=f"target printed {s:,.0f}; its own {section} lines "
+                            f"sum to {derived:,.0f}")
+            # The printed "TOTAL LIABILITIES & EQUITY" is a figure the target
+            # struck itself, not the sum of the two checked above, so it earns
+            # its own comparison. Deliberately OPTIONAL rather than
+            # flagged-when-absent: plenty of balance sheets print no combined
+            # line, and demanding one would fire on legitimate documents. The
+            # three section totals above are the required set.
+            sle = _scalar(per_date.get("liabilities_and_equity"))
+            if sle is not None:
+                dle = (_sum_lines([l for l in bs_lines
+                                   if l.get("section") == "liability"], d)
+                       + _sum_lines([l for l in bs_lines
+                                     if l.get("section") == "equity"], d))
+                _tie(rep,
+                     f"Stated liabilities & equity foots to its own lines ({d})",
+                     "stated-tie", sle, dle, tol=SUBTOTAL_TOLERANCE,
+                     blocking=False,
+                     detail=f"target printed {sle:,.0f}; its own liability and "
+                            f"equity lines sum to {dle:,.0f}")
 
     # --- A. Balance sheet balances: Assets = Liabilities + Equity ------------
     if not bs_lines or not bs_dates:
