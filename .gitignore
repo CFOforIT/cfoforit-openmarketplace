@@ -14,3 +14,7 @@ eos-profile.json
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Python build artifacts (never mirror compiled bytecode into the public copy)
+__pycache__/
+*.py[cod]
