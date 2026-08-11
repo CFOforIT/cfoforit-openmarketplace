@@ -1,19 +1,18 @@
 ---
 name: Bug report
-about: A skill or the dashboard behaves incorrectly
-title: "[bug] "
+about: Something in this repo behaves differently than it says it does
 labels: bug
-assignees: Storres1970
 ---
 
-**Plugin / skill**
+## What happened
 
-**What happened**
+## What should have happened
 
-**What you expected**
+## How to reproduce
 
-**Steps to reproduce**
+<!-- The exact command, and its actual output. -->
 
-**Environment** <!-- Claude surface, OS, version -->
+## Which record is wrong
 
-**Note:** please do not paste client data, credentials, or personal information here.
+<!-- If a README, comment, or count says something the code contradicts, name both
+     sides. A disagreement between two records is the bug, not just the symptom. -->

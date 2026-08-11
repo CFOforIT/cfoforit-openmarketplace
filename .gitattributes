@@ -1,7 +1,43 @@
+# Normalize line endings across all platforms so clones never show phantom
+# whitespace or EOL churn. Text files are stored as LF in the repo; binaries are
+# left untouched. Added 2026-06-27 to fix the 274 phantom-change problem in
+# cfoforit-claude-plugins, and a 1,173-byte phantom diff on an artifact index.html
+# that read as content drift.
+#
+# Canonical: standards/repo-baseline/files/.gitattributes in cfoforit-claude-plugins.
+# Do not edit in place. See CONTRIBUTING.md, "Repo QC baseline".
+
 * text=auto eol=lf
-*.html text eol=lf
-*.js   text eol=lf
-*.json text eol=lf
-*.md   text eol=lf
-*.png  binary
-*.ico  binary
+
+# Explicit text types (belt and braces where a tool guesses wrong)
+*.html  text eol=lf
+*.js    text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.css   text eol=lf
+*.py    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+
+# PowerShell and cmd are the surfaces where LF endings cause real breakage.
+*.ps1   text eol=crlf
+*.psm1  text eol=crlf
+*.psd1  text eol=crlf
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binaries must never be normalized and never diffed as text.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.zip   binary
+*.skill binary
+*.xlsx  binary
+*.xlsm  binary
+*.xlsb  binary
+*.docx  binary
+*.pptx  binary
+*.mp3   binary

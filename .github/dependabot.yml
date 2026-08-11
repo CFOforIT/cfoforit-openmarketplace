@@ -1,5 +1,11 @@
-# github-actions only: the Python here (validators, eval runners, generated engine)
-# ships no dependency manifest, so a pip entry would have nothing to scan.
+# Supply-chain automation. Actions are SHA-pinned in the workflows; Dependabot
+# is what bumps those pins when a new release lands, so pinning does not mean
+# going stale.
+#
+# github-actions only, deliberately: this repo carries no requirements.txt,
+# pyproject.toml, or package.json, so a `pip` or `npm` ecosystem entry would
+# have nothing to scan. An entry that scans nothing is noise that looks like
+# coverage. Add one in the same commit that adds the first manifest.
 version: 2
 updates:
   - package-ecosystem: "github-actions"
