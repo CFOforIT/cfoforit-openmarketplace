@@ -49,6 +49,24 @@ unreliable. Lowercase is the canonical form.
 Agent branches use `claude/<short-description>`. Merged branches are deleted
 automatically; do not re-use one.
 
+## Registering what you ship (build events and the topology)
+
+Shipping or version-bumping an AI asset (skill, plugin, MCP, script, artifact) means
+appending its build event in the same change -- Rule 14 made mechanical. From a clone
+of `CFOforIT/cfoforit-claude-plugins`, run `tools/append_build_event.py` to validate
+and queue the event in `inventory/build-events/pending.jsonl`; CI fails a skill
+version bump that arrives without one. Steve's machine drains the queue into the
+canonical `AI_Build_Manifest.jsonl` (see `jarvis-context-mcp` in `cfoforit-mcps`);
+never write to the manifest directly from a session, and never delete a line from
+`pending.jsonl` or `drained.jsonl` -- both are append-only.
+
+If your change alters the asset roster itself -- a skill added, renamed, or retired --
+update `public/topology.html` in `CFOforIT/jarvis-mobile-hosting` in the same change
+(that repo's `CLAUDE.md` carries the paired canonical/mirror protocol). An automated
+estate-vs-topology drift check is the planned follow-up from the 2026-08-12 pipeline
+brief; until it lands, this rule is enforced the way every rule was before it had a
+check: in review.
+
 ## The Standards Check is not optional
 
 Every PR carries a Standards Check line, `pass` or `partial` or `fail`, citing the
