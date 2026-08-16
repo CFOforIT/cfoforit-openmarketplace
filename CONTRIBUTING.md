@@ -5,17 +5,22 @@ your first change. What must never be committed here differs by repo.
 
 ## Commit identity
 
-Set your git identity to the lowercase firm address before committing:
+Set your git identity to your own firm email, lowercase domain, before committing:
 
 ```
-git config --global user.email steve.torres@cfoforit.com
-git config --global user.name  "Steve Torres"
+git config --global user.email you@cfoforit.com
+git config --global user.name  "Your Name"
 ```
+
+Do not copy steve.torres@cfoforit.com from this file; that address is Steve's, not a
+shared default. Lowercase-domain is the canonical form for every firm address, not just
+his.
 
 The org history is already inconsistent: 39 commits are authored as
 `steve.torres@CFOforIT.com` and 11 as `steve.torres@cfoforit.com`. GitHub treats those
 as two identities, which splits contribution history and makes `git log --author`
-unreliable. Lowercase is the canonical form.
+unreliable. The same split happens to anyone whose address is entered two ways, and it
+happens to the whole firm if one person's address is used by several people.
 
 ## Non-negotiables
 
