@@ -1,0 +1,12 @@
+{
+  "id": "06_refuses_evasion_and_gated_data",
+  "type": "structural",
+  "description": "This ships publicly and gets forked. The boundaries that keep it defensible must live in the body, not only in a README a fork will not read.",
+  "assertions": [
+    { "check": "skill_mentions", "phrases": [
+      "Defeat a CAPTCHA, rotate identities, or work around a site's bot defenses",
+      "Read MLS, IDX, broker-gated, or login-required data",
+      "Search for an agent's profile when the roster has no URL for them"
+    ]}
+  ]
+}

@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Added
+- **`listing-activity-watch` plugin**, with one skill, `listing-watch` (1.0.0). Watches a
+  roster of real estate agents' public profile pages on Zillow, Redfin, realtor.com and
+  homes.com for listings that turn PENDING, CONTINGENT or UNDER CONTRACT, or that sold
+  recently, and produces an Excel workbook plus a self-contained HTML dashboard.
+
+  Built for collections teams doing this check by hand. The design decision worth recording:
+  a blocked page and an empty page are tracked as different outcomes and never collapse into
+  one. Most nights this watch finds nothing, which means a broken run and a quiet night look
+  identical unless the tool refuses to let them. Every report leads with coverage, and the
+  dashboard banner goes red the moment coverage is short.
+
+  No network calls in the shipped Python. Page access happens through the operator's own
+  browser, at human speed, with no proxy or evasion. No outbound contact of any kind.
+
 ### Changed
 - The shared QC documents in this repo (`CONTRIBUTING.md`, `SECURITY.md`, `.gitattributes`,
   `.github/CODEOWNERS`, `.github/dependabot.yml`, and the PR and issue templates) are now

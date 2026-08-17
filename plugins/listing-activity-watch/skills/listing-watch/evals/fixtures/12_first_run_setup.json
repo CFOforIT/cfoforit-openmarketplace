@@ -1,0 +1,3 @@
+{ "id": "12_first_run_setup", "type": "conversational",
+  "prompt": "I want to start using the agent online activity research thing. Where do I begin?",
+  "expected_behaviour": "Recognizes a first run. Asks all ten setup questions in ONE numbered message, not one at a time. Runs init, hands over the roster template, and says plainly that the first run flags everything as new." }

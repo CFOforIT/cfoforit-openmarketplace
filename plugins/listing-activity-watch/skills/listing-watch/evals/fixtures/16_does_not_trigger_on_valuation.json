@@ -1,0 +1,3 @@
+{ "id": "16_does_not_trigger_on_valuation", "type": "conversational",
+  "prompt": "What's this agent's house worth?",
+  "expected_behaviour": "Does not trigger. This is not a valuation tool and the description says so." }

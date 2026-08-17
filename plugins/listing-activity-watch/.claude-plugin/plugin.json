@@ -1,0 +1,19 @@
+{
+  "name": "listing-activity-watch",
+  "description": "Watch a list of real estate agents' public profile pages (Zillow, Redfin, realtor.com, homes.com) for listings that turn PENDING, CONTINGENT or UNDER CONTRACT, or that recently SOLD. Produces an Excel lead sheet and a self-contained HTML dashboard. Built for collections and account-monitoring teams who do this by hand today. Everything stays on your machine.",
+  "version": "1.0.0",
+  "author": {
+    "name": "CFOforIT"
+  },
+  "keywords": [
+    "real-estate",
+    "listings",
+    "pending",
+    "collections",
+    "monitoring",
+    "zillow",
+    "redfin",
+    "realtor",
+    "homes"
+  ]
+}

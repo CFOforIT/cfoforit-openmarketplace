@@ -1,0 +1,14 @@
+{
+  "id": "02_status_wording_maps_correctly",
+  "type": "structural",
+  "description": "Four sites word the same status four ways. If the mapping drifts, hits silently stop appearing and nobody finds out, because zero hits is the normal result.",
+  "assertions": [
+    { "check": "status_mapping", "cases": [
+      ["Pending sale", "PENDING"], ["Sale pending", "PENDING"],
+      ["Active under contract", "CONTINGENT"], ["Contingent", "CONTINGENT"],
+      ["Under contract", "UNDER CONTRACT"], ["Recently sold", "SOLD"],
+      ["Closed", "SOLD"], ["For sale", "ACTIVE"],
+      ["Coming soon", "COMING SOON"], ["Wibble", "OTHER"]
+    ]}
+  ]
+}

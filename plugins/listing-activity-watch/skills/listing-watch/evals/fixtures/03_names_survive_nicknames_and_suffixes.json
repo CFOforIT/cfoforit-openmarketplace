@@ -1,0 +1,15 @@
+{
+  "id": "03_names_survive_nicknames_and_suffixes",
+  "type": "structural",
+  "description": "Profile pages decorate names. A nickname or credential suffix must not read as a different person, and an actually different person must not read as a match. Getting the second one wrong sends someone after the wrong agent.",
+  "assertions": [
+    { "check": "name_matching", "cases": [
+      ["Robert Smith", "Bob Smith, PA, REALTOR", "exact"],
+      ["Christine Harper", "Christy Harper", "exact"],
+      ["Katherine Doyle", "Katie Doyle | Keller Williams", "exact"],
+      ["Christine Harper", "Dana Fielder", "mismatch"],
+      ["Maria Gonzalez", null, "unknown"],
+      ["Maria Gonzalez", "", "unknown"]
+    ]}
+  ]
+}

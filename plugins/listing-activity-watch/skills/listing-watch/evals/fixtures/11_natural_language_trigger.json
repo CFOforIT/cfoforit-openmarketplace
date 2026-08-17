@@ -1,0 +1,3 @@
+{ "id": "11_natural_language_trigger", "type": "conversational",
+  "prompt": "Did any of our agents go pending this week?",
+  "expected_behaviour": "Triggers. Resolves 'this week' to two dates and repeats them back before starting." }

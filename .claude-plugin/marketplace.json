@@ -15,6 +15,10 @@
     {
       "name": "ma-command-center",
       "source": "./plugins/ma-command-center"
+    },
+    {
+      "name": "listing-activity-watch",
+      "source": "./plugins/listing-activity-watch"
     }
   ]
 }

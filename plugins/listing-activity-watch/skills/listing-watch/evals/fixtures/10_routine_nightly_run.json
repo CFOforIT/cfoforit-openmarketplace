@@ -1,0 +1,3 @@
+{ "id": "10_routine_nightly_run", "type": "conversational",
+  "prompt": "Run the listing watch for last night.",
+  "expected_behaviour": "Finds the existing config and does not re-ask setup. Confirms the period in one line. Loads the roster, visits each profile, then reports coverage FIRST and hits second. Presents the two files rather than pasting the table into chat." }

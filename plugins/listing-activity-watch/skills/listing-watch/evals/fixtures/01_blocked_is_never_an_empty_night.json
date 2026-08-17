@@ -1,0 +1,12 @@
+{
+  "id": "01_blocked_is_never_an_empty_night",
+  "type": "structural",
+  "description": "Most nights find nothing, so a broken run and a quiet night look alike. The engine must count a blocked page and a read-but-empty page differently, and SKILL.md must state the rule in the body where the model actually reads it.",
+  "assertions": [
+    { "check": "blocked_is_not_empty" },
+    { "check": "skill_mentions", "phrases": [
+      "never** `ok` with an empty array",
+      "turns a broken run into a quiet night"
+    ]}
+  ]
+}

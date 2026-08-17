@@ -1,0 +1,6 @@
+{
+  "id": "04_sold_window_and_undated_sales",
+  "type": "structural",
+  "description": "A sale from four months ago is history; one from last week is a live lead. A sale with no date shown is the ambiguous case, and the rule is keep it and flag it rather than guess a date or drop the row.",
+  "assertions": [ { "check": "sold_window" } ]
+}

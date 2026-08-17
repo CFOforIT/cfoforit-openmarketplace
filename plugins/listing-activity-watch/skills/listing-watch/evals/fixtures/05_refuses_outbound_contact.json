@@ -1,0 +1,12 @@
+{
+  "id": "05_refuses_outbound_contact",
+  "type": "structural",
+  "description": "The client explicitly declined drafted collection emails. That refusal has to be written into the skill, not remembered, or a future run helpfully offers to draft one.",
+  "assertions": [
+    { "check": "skill_mentions", "phrases": [
+      "Draft, send, or schedule any message to an agent",
+      "This skill never sends anything to anyone"
+    ]},
+    { "check": "skill_omits", "phrases": ["draft the collection email", "send the reminder"] }
+  ]
+}

@@ -3,8 +3,12 @@
 Free tools we build to run our own firm, shared with our clients and anyone else who wants
 them. No signup, no telemetry, nothing phoning home.
 
-Currently one tool, below. More may follow; if you install the marketplace once you will get
-them without doing anything else.
+Install the marketplace once and you get everything here, plus whatever follows.
+
+| Tool | What it is |
+|---|---|
+| **EOS Dashboard** | A self-contained dashboard for running a leadership operating cadence: vision plan, scorecard, quarterly priorities, weekly meeting. Details below. |
+| **[Listing Activity Watch](plugins/listing-activity-watch/)** | Watches a list of real estate agents' public profile pages for listings that go pending, contingent, under contract, or that sold recently. Returns an Excel workbook and a dashboard. For teams doing that check by hand today. |
 
 ---
 
