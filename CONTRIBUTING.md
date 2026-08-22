@@ -40,6 +40,47 @@ happens to the whole firm if one person's address is used by several people.
 - If merging to `main` triggers an automatic deploy for this repo, treat every merge as
   a production release. No exceptions to branch-and-PR.
 
+## Session isolation
+
+**One session = one git worktree + one branch + one PR. Never push to `main` directly.**
+
+Several Claude Code and Cowork sessions often work the same repo at the same time.
+Sharing one clone on `main` collides on the three things git assumes belong to a single
+actor:
+
+1. **The working directory.** Two sessions editing one file: the second save silently
+   wins and git never warns, because the losing change was never committed. Observed on
+   2026-07-24, a skill's `version:` bumped three times out from under an in-flight edit.
+2. **The staging index.** There is only one. A single `git add -A` from any session
+   sweeps another session's half-finished files into your commit. Stage explicit paths.
+3. **The push.** `git push` sends the whole commit ancestry, so you publish other
+   sessions' commits alongside yours, including work that is not ready.
+
+A worktree gives each session its own directory and branch backed by the same `.git`
+store, so none of the three can collide. The PR adds a serialization point and lets CI
+gate the change before it reaches `main`.
+
+If this repo ships `tools/new-session-worktree.ps1` or `tools/new-session-worktree.sh`,
+one command sets it up:
+
+```
+tools/new-session-worktree.sh <session-name>
+```
+
+Otherwise create it by hand:
+
+```
+git worktree add -b session/<session-name> <path> origin/main
+```
+
+Rebase onto `origin/main` before opening the PR, and never with `--autostash` on a clone
+other sessions share: a reapply conflict can leave `<<<<<<<` markers on disk while
+reporting success. Clean the tree, then plain `git pull --rebase`.
+
+When the PR has merged, remove the worktree (`git worktree remove <path>`) and delete the
+branch. A worktree left behind drifts silently behind `main` and reads like stranded work
+to the next session that finds it.
+
 ## Workflow
 
 1. Fork (public repos) or branch from `main` (private repos).
