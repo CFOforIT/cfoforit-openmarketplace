@@ -6,6 +6,20 @@
 """
 
 
+# ONE version number for this engine, and the code owns it: pyproject.toml reads
+# it via `dynamic = ["version"]`, so it must stay a plain string literal that
+# setuptools can parse statically. Never restate the number in pyproject.
+#
+# 1.0.0 is a baseline, not a reconstruction. This engine shipped with no version
+# of any kind, in code or in packaging, which is why nothing could tell a current
+# install from a three-week-old one. Prior history was not reconstructed; bump
+# MAJOR/MINOR/PATCH from here per Rule 17.
+#
+# Distinct from config.CONFIG_VERSION, which versions the deal-config schema and
+# is not this.
+__version__ = "1.0.0"
+
+
 class MAError(Exception):
     """Raised when the engine refuses to proceed.
 
