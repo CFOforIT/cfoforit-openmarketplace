@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 CONFIG_FILENAME = "ma-config.json"
 CONFIG_ENV_VAR = "CFOFORIT_MA_CONFIG"
@@ -177,6 +177,39 @@ def find_ma_folder(client_dir: Path) -> str:
         f"{', '.join(hits)}. Say which one -- refusing to guess.")
 
 
+def _refuse_unless_plain_name(label: str, val: str) -> None:
+    """Refuse anything that is not a single, plain folder name.
+
+    The old check asked `os.path.isabs()`, which answers for the CURRENT
+    operating system and therefore disagreed with itself across the estate:
+    on Python 3.13 Windows `ntpath.isabs("/etc")` is False, so a POSIX
+    absolute name sailed through on every founder machine, while on Linux
+    `"C:/x"` is neither absolute nor traversing and sailed through in CI.
+    Each platform enforced the half of the rule the other one broke.
+
+    These names come off a shared drive and become part of a path, so the
+    question worth asking is not "is this absolute here" but "is this one
+    plain folder name anywhere". A separator, a drive letter, a root, or a
+    `.`/`..` component means it is not.
+    """
+    text = str(val)
+    if not text.strip():
+        raise ConfigError(f"{label} is empty")
+    if "/" in text or "\\" in text:
+        raise ConfigError(
+            f"{label}={val!r} is not a plain folder name: it contains a path "
+            f"separator. Absolute paths and nested paths are refused -- that "
+            f"is how deal data lands in the wrong folder.")
+    if PureWindowsPath(text).drive or PurePosixPath(text).is_absolute():
+        raise ConfigError(
+            f"{label}={val!r} is not a plain folder name: it carries a drive "
+            f"or root. Refusing.")
+    if text.strip() in (".", ".."):
+        raise ConfigError(
+            f"{label}={val!r} is not a plain folder name: '.' and '..' are "
+            f"refused -- that is how deal data lands in the wrong folder.")
+
+
 def resolve_deal_path(cfg: dict, *, target: str, client: str | None = None,
                       ma_folder: str | None = None) -> Path:
     """Resolve one deal's folder, refusing any result that escapes deal_root.
@@ -203,24 +236,14 @@ def resolve_deal_path(cfg: dict, *, target: str, client: str | None = None,
     for label, val in (("target", target), ("client", client)):
         if val is None:
             continue
-        if not str(val).strip():
-            raise ConfigError(f"{label} is empty")
-        if os.path.isabs(str(val)) or ".." in Path(str(val)).parts:
-            raise ConfigError(
-                f"{label}={val!r} is not a plain folder name. Absolute paths "
-                f"and '..' are refused -- that is how deal data lands in the "
-                f"wrong folder.")
+        _refuse_unless_plain_name(label, val)
 
     if "{ma_folder}" in tpl:
         if ma_folder is None:
             ma_folder = find_ma_folder(root / str(client))
         # A discovered name is still untrusted: it came off a drive that may be
         # shared, and it is about to become part of a path.
-        if not str(ma_folder).strip():
-            raise ConfigError("ma_folder is empty")
-        if os.path.isabs(str(ma_folder)) or ".." in Path(str(ma_folder)).parts:
-            raise ConfigError(
-                f"ma_folder={ma_folder!r} is not a plain folder name; refusing")
+        _refuse_unless_plain_name("ma_folder", ma_folder)
     elif ma_folder is not None:
         raise ConfigError(
             f"ma_folder={ma_folder!r} was supplied but path_template has no "
