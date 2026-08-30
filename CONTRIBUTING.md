@@ -1,4 +1,4 @@
-# Contributing to cfoforit-openmarketplace
+# Contributing to {{REPO_NAME}}
 
 How changes land in this repo. Read `CLAUDE.md` (if present) and `SECURITY.md` before
 your first change. What must never be committed here differs by repo.
@@ -108,10 +108,19 @@ never write to the manifest directly from a session, and never delete a line fro
 
 If your change alters the asset roster itself -- a skill added, renamed, or retired --
 update `public/topology.html` in `CFOforIT/jarvis-mobile-hosting` in the same change
-(that repo's `CLAUDE.md` carries the paired canonical/mirror protocol). An automated
-estate-vs-topology drift check is the planned follow-up from the 2026-08-12 pipeline
-brief; until it lands, this rule is enforced the way every rule was before it had a
-check: in review.
+(that repo's `CLAUDE.md` carries the paired canonical/mirror protocol). This is checked
+automatically, and has been since before the 2026-08-12 pipeline brief called it a
+"planned follow-up": `tools/check_topology_rosters.py` runs in `skill-standards-gate.yml`,
+checks out the marketplaces, and compares every plugin roster on `topology.html` against
+the skills that actually exist. It fails in BOTH directions and names the entry: a name on
+the page that resolves to nothing, and a skill on disk the page never mentions. It carries
+its own `--canary` falsification run. Two further checks run in `topology-mirror-drift.yml`
+in the topology repo: `check_estate_counts.py` for the summary counts, and
+`build_skill_estate.py --check` for the Skill Estate sheet.
+
+What is still enforced in review, and only this: a roster whose SHAPE changes without a
+name changing, since the roster the sheet renders from is typed in `skill_estate.py` and
+only its names are asserted against disk.
 
 ## The Standards Check is not optional
 
