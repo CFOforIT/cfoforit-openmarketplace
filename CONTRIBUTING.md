@@ -1,4 +1,4 @@
-# Contributing to {{REPO_NAME}}
+# Contributing to cfoforit-openmarketplace
 
 How changes land in this repo. Read `CLAUDE.md` (if present) and `SECURITY.md` before
 your first change. What must never be committed here differs by repo.
