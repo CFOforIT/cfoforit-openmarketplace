@@ -3,13 +3,22 @@
 # Canonical: standards/repo-baseline/files/.github/CODEOWNERS in
 # cfoforit-claude-plugins. Do not edit in place.
 #
-# This file is `templated`, not `exact`: /tools/
-/plugins/ is substituted per repo with
-# that repo's own top-level directories. The OWNER is asserted separately by the
-# manifest's `owner_must_be`, so a well-formed file that names the wrong approver is a
-# distinct and higher-severity finding than a formatting difference.
+# This file is `templated`, not `exact`: the EXTRA-PATHS variable is substituted per repo
+# with that repo's own top-level directories, and the renderer appends the owner to each
+# one. NEVER write a placeholder in double braces anywhere in this file, comments
+# included: the renderer does not distinguish a comment from a rule, so a multi-line value
+# lands at column 0 and every line after the first reads as a path entry.
+#
+# In CODEOWNERS the last matching pattern wins, and a pattern with NO owner CLEARS
+# ownership. A bare path line therefore removes the protection this file exists to grant,
+# which is why the owner is appended per line rather than left to the default rule above.
+#
+# The OWNER is asserted separately by the manifest's `owner_must_be`, so a well-formed file
+# that names the wrong approver is a distinct and higher-severity finding than a formatting
+# difference. That both those checks pass says nothing about whether every path line names
+# anyone: that is a third check, and it is the one this file was failing until 2026-09-01.
 
 *                       @Storres1970
 /.github/               @Storres1970
-/tools/
-/plugins/
+/tools/                 @Storres1970
+/plugins/               @Storres1970
