@@ -9,10 +9,12 @@
 ## Standards Check
 
 <!-- Required. `pass` / `partial` / `fail`, citing the charter rules that applied.
-     A close with no Standards Check is itself a fail under Rule 1. -->
+     How to fill this in, and what not to re-check, is stated once and only once at
+     https://github.com/CFOforIT/cfoforit-standards/blob/main/docs/standards-check.md -->
 
 - Result: `pass` / `partial` / `fail`
 - Rules that applied:
+- `docs/pr-checklist.md` worked: `yes` / `n/a, this repo has none`
 - Rules deliberately not met, and why:
 
 ## Verification
