@@ -3,6 +3,10 @@
 ## [Unreleased]
 
 ### Added
+- **`tools/claude-code-shortcut/install.ps1`**: one-line installer that puts a "Claude Code"
+  shortcut (custom icon embedded) on the user's desktop, opening PowerShell and a Claude Code
+  CLI session. Writes only inside the user's profile. Run with
+  `irm https://raw.githubusercontent.com/CFOforIT/cfoforit-openmarketplace/main/tools/claude-code-shortcut/install.ps1 | iex`.
 - **`listing-activity-watch` plugin**, with one skill, `listing-watch` (1.0.0). Watches a
   roster of real estate agents' public profile pages on Zillow, Redfin, realtor.com and
   homes.com for listings that turn PENDING, CONTINGENT or UNDER CONTRACT, or that sold
